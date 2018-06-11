@@ -1,11 +1,9 @@
 FracMap
 =======
 
+Based on the source code found here: ["FracMAP: a user-interactive package for performing simulation and orientation-specific morphology analysis of fractal-like solid nano-agglomerates"](http://cpc.cs.qub.ac.uk/summaries/AEDD_v1_0.html)
+
 Software for simulating carbon pseudo-fractal agglomerates and analyzing their morphological properties.
-
-Windows 8/7/Vista 32-bit executable available for [download][2].
-
-![Example of simulated carbon fractal](http://www.mgarro.com/wp-content/uploads/2011/09/fractal_generation.png "Simulated fractal aggregate with 3D fractal dimension of 1.82, prefactor of 1.19, and number of monomers set to 500.")
 
 Hints For Usage
 ---------------
