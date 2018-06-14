@@ -26,7 +26,7 @@ If installing elsewhere, redirect the project dependencies to the chosen locatio
 Microsoft Visual Studio (MSV) 2005 workspace and project files have been included in
 the source code distribution.
 
-*To build executable:*
+**To build executable:**
 
 1) Open the Microsoft Visual Studio Solution file `Unix_Fractal.sln` from within MSV.
 
@@ -53,7 +53,7 @@ The build should create the executable file `fractal` in the same directory, `./
 #### Method 1: Without command line arguments
 
 From the command line, execution without parameters (accomplished by double-clicking the executable in Windows):
-*You can either:*
+**You can either:**
 
 1) Double click the file in Windows or Linux.
 
@@ -80,7 +80,7 @@ Fractal Size?
 <Type the value and hit enter>
 ```
 
-*Example:*
+**Example:**
 ```
 Fractal Dimension?
 2.0
@@ -100,7 +100,7 @@ Command line execution given specified parameters:
 ./fractal <fractal_dimension> <prefactor> <size>
 ```
 
-*Example:*
+**Example:**
 ```
 ./fractal 2.0 1.19 10
 ```
@@ -147,35 +147,35 @@ The user is prompted for the filname of the output file that the program will wr
 
 For each trial, the following parameters are outputted.
 
-*N-projected* - The apparent number of monomer in the 2-D image area of the 2-D image.
+**N-projected** - The apparent number of monomer in the 2-D image area of the 2-D image.
 
-*N* - The actual number of monomers in the 2-D image.
+**N** - The actual number of monomers in the 2-D image.
 
-*Lmax* - The maximum length (in units, monomer radius is one unit) of the 2-D image.
+**Lmax** - The maximum length (in units, monomer radius is one unit) of the 2-D image.
 
-*width* - The maximum perpendicular width to the given Lmax.
+**width** - The maximum perpendicular width to the given Lmax.
 
-*2-D Fractal Dimension* (Box Counting Method)
+**2-D Fractal Dimension** (Box Counting Method)
 
-*R^2* - The value for the linear regression to find the above value.
+**R^2** - The value for the linear regression to find the above value.
 
-*2-D Hybrid Perimeter Fractal Dimension*
+**2-D Hybrid Perimeter Fractal Dimension**
 
-*R^2* - The value for the linear regression to find the above value.
+**R^2** - The value for the linear regression to find the above value.
 
-*Sorrenson's 2-D Perimeter Fractal Dimension Method*
+**Sorrenson's 2-D Perimeter Fractal Dimension Method**
 
-*R^2* - The value for the linear regression to find the above value.
+**R^2** - The value for the linear regression to find the above value.
 
-*3-D Fractal Dimension*
+**3-D Fractal Dimension**
 
-*2-D Radius of Gyration*
+**2-D Radius of Gyration**
 
-*3-D Radius of Gyration*
+**3-D Radius of Gyration**
 
 ## Built With
 
-* [wxWidgets](https://github.com/wxWidgets/wxWidgets) - The cross-platform GUI library used.
+** [wxWidgets](https://github.com/wxWidgets/wxWidgets) - The cross-platform GUI library used.
 
 ## License
 
@@ -183,6 +183,6 @@ This project is licensed under the GPL-2.0 License - see the [LICENSE](LICENSE) 
 
 ## Acknowledgements
 
-* Credit to the Rajan K. Chakrabarty, Mark A. Garro, Shammah Chancellor, Christopher Herald, and Hans MoosMuller for releasing the first iteration of FracMAP in 2009. [source code](http://cpc.cs.qub.ac.uk/summaries/AEDD_v1_0.html) ["FracMAP: A user-interactive package for performing simulation and orientation-specific morphology analysis of fractal-like solid nano-allglomerates"](https://www.sciencedirect.com/science/article/pii/S0010465509000411?_rdoc=1&_fmt=high&_origin=gateway&_docanchor=&md5=b8429449ccfc9c30159a5f9aeaa92ffb)
+** Credit to the Rajan K. Chakrabarty, Mark A. Garro, Shammah Chancellor, Christopher Herald, and Hans MoosMuller for releasing the first iteration of FracMAP in 2009. [source code](http://cpc.cs.qub.ac.uk/summaries/AEDD_v1_0.html) ["FracMAP: A user-interactive package for performing simulation and orientation-specific morphology analysis of fractal-like solid nano-allglomerates"](https://www.sciencedirect.com/science/article/pii/S0010465509000411?_rdoc=1&_fmt=high&_origin=gateway&_docanchor=&md5=b8429449ccfc9c30159a5f9aeaa92ffb)
 
-* Credit to [Mark Garro](https://github.com/garromark) for improving the source code and giving the simulation a GUI. [GitHub repo](https://github.com/garromark/fracmap) This project is a fork of Mark's repo.
+** Credit to [Mark Garro](https://github.com/garromark) for improving the source code and giving the simulation a GUI. [GitHub repo](https://github.com/garromark/fracmap) This project is a fork of Mark's repo.
