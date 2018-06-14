@@ -175,7 +175,7 @@ For each trial, the following parameters are outputted.
 
 ## Built With
 
-** [wxWidgets](https://github.com/wxWidgets/wxWidgets) - The cross-platform GUI library used.
+* [wxWidgets](https://github.com/wxWidgets/wxWidgets) - The cross-platform GUI library used.
 
 ## License
 
@@ -183,6 +183,6 @@ This project is licensed under the GPL-2.0 License - see the [LICENSE](LICENSE) 
 
 ## Acknowledgements
 
-** Credit to the Rajan K. Chakrabarty, Mark A. Garro, Shammah Chancellor, Christopher Herald, and Hans MoosMuller for releasing the first iteration of FracMAP in 2009. [source code](http://cpc.cs.qub.ac.uk/summaries/AEDD_v1_0.html) ["FracMAP: A user-interactive package for performing simulation and orientation-specific morphology analysis of fractal-like solid nano-allglomerates"](https://www.sciencedirect.com/science/article/pii/S0010465509000411?_rdoc=1&_fmt=high&_origin=gateway&_docanchor=&md5=b8429449ccfc9c30159a5f9aeaa92ffb)
+* Credit to the Rajan K. Chakrabarty, Mark A. Garro, Shammah Chancellor, Christopher Herald, and Hans MoosMuller for releasing the first iteration of FracMAP in 2009. [source code](http://cpc.cs.qub.ac.uk/summaries/AEDD_v1_0.html) ["FracMAP: A user-interactive package for performing simulation and orientation-specific morphology analysis of fractal-like solid nano-allglomerates"](https://www.sciencedirect.com/science/article/pii/S0010465509000411?_rdoc=1&_fmt=high&_origin=gateway&_docanchor=&md5=b8429449ccfc9c30159a5f9aeaa92ffb)
 
-** Credit to [Mark Garro](https://github.com/garromark) for improving the source code and giving the simulation a GUI. [GitHub repo](https://github.com/garromark/fracmap) This project is a fork of Mark's repo.
+* Credit to [Mark Garro](https://github.com/garromark) for improving the source code and giving the simulation a GUI. [GitHub repo](https://github.com/garromark/fracmap) This project is a fork of Mark's repo.
