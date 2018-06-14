@@ -1,71 +1,45 @@
-/*
- * main.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
- *
- * The main function can be run cross-platform and provides access to
- * written utilities for fractal generation and analysis.
+/* main.cpp - Program entry point.
+ * Author: Mark Garro
+ * Created: September 06, 2007
+ * Modified: June 12, 2018 by Chris Hayes
  */
-
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <cstring>
 #include <sstream>
+#include <unistd.h>
+#include <sys/wait.h>
 #include "fractal.h"
 #include "settings.h"
 #include "micrograph.h"
-
-#include <unistd.h>
-#include <sys/wait.h>
-
 using namespace std;
+enum {escape, key_0, key_1, key_2, key_3};
 
-enum {
-	ESCAPE,
-	KEY_0,
-	KEY_1,
-	KEY_2,
-	KEY_3
-};
-
-bool generate_fractal(Fractal *base, unsigned int fractal_size, bool output)
-{
-	unsigned int removals = 0;
-	
-	do
-	{
-	TRY_ADD_MONOMER:
-		try
-		{	
-			if( removals > fractal_size ) //This does NOT mean there are negative monomers in the chain
-				//Just using size as an adjustable parameter for the number of failures seems reasonable.
-			{
-				!output || cout << "Too many failures -- Ending execution!"<<endl;
-				return false;
-			} else if( ! base->create_monomer() ) //No reason to try a bunch of times here as this is taken care of in MonteCarlo.
-			{
-				!output || cout << "Removing Last Monomer"<<endl;
-				base->remove_last(); //Modification by me to not clear the whole fractal.
-				removals++;
-				goto TRY_ADD_MONOMER;
-			}
-			
-			!output || cout << "Fractal Size: " << (int)base->size() << " of " << fractal_size << endl;
-		}
-		catch(...)
-		{
-			!output || cout << "Unknown Error in Fractal Creation." <<endl ;
-			return true;
-		}
-	} while(base->size() < fractal_size);
-	
+bool
+generate_fractal(Fractal *base, int fractal_size, bool output) {
+    // Create polynomer.
+    for (int removals=0; (int)base->size()<fractal_size;) {
+        // Attempt to create monomer.
+        if (base->create_monomer()) {
+            // Successfully created new monomer.
+            if (output) {
+                cout << "Fractal Size: " << (int)base->size() 
+                     << " of " << fractal_size << endl;
+            }
+        } else {
+            // Could not create monomer, removing...
+            if (output)
+                cout << "Removing last monomer." << endl;
+            base->remove_last();
+            removals++;
+        }
+    }
 	return true;
 }
 
-void pre_programmed_thread(int cpuNum, int cpus)
-{
+void
+pre_programmed_thread(int cpuNum, int cpus) {
   const int Min_Size = 10, Max_Size = 500;
   const double minK = .9, maxK = 1.1, Kstep = 0.05;
   const double minD = 1.0, maxD = 3.0, Dstep = .01, Dtotal = (maxD - minD)/Dstep;
@@ -75,10 +49,8 @@ void pre_programmed_thread(int cpuNum, int cpus)
   Fractal *base;
   
   double k = 1.19;
-  for(double D = minD; D < maxD; D+=Dstep)
-  {
-	for(unsigned int i = cpuNum; i < Num_Trials; i+=cpus)
-	{
+  for(double D = minD; D < maxD; D+=Dstep) {
+	for(unsigned int i = cpuNum; i < Num_Trials; i+=cpus) {
 	  unsigned int N = (double)rand() / RAND_MAX * (Max_Size - Min_Size) + Min_Size;
 	  //Start from nothing
 	  base = new Fractal();
@@ -112,8 +84,8 @@ void pre_programmed_thread(int cpuNum, int cpus)
 }
 
 
-void pre_programmed()
-{
+void 
+pre_programmed() {
 	  const int cpus = 4;
 	  int* pids = new int[cpus];
   
@@ -140,32 +112,31 @@ void pre_programmed()
 	  }
 }
 
-
-void print_menu(Fractal & base)
-{
+void 
+print_menu(Fractal & base) {
 	cout << "Fractal Parameters: ";
 	cout << "N = " << base.size() << ",\t";
 	
 	cout << endl;
 	cout << "Choose an option to continue." << endl;
 	cout << "Fractal menu:" << endl;
-	cout << "\t" << ESCAPE  << ": Exit" << endl;
-	cout << "\t" << KEY_0  << ": Clear current fractal and create a new fractal" << endl;
-	cout << "\t" << KEY_1  << ": Calculate Structure Factor of Current Fractal" << endl;
-	cout << "\t" << KEY_2  << ": 2D Micrograph Analysis" << endl;
-	cout << "\t" << KEY_3  << ": Help" << endl;
+	cout << "\t" << escape  << ": Exit" << endl;
+	cout << "\t" << key_0  << ": Clear current fractal and create a new fractal" << endl;
+	cout << "\t" << key_1  << ": Calculate Structure Factor of Current Fractal" << endl;
+	cout << "\t" << key_2  << ": 2D Micrograph Analysis" << endl;
+	cout << "\t" << key_3  << ": Help" << endl;
 }
 
-int get_user_input(Fractal & base)
-{
+int 
+get_user_input(Fractal & base) {
 	int key;
 	print_menu(base);
 	cin >> key;
 	return key;
 }
 
-void print_input_error(const char *program_name, const char *error_msg)
-{
+void 
+print_input_error(const char *program_name, const char *error_msg) {
 	cerr << "Error: " << error_msg << endl;
 	cerr << "Usage:" << endl;
 	cerr << "\t" << program_name << " Df kf N" << endl;
@@ -177,70 +148,58 @@ void print_input_error(const char *program_name, const char *error_msg)
 	cerr << "\tPrefactor (kf):\t" << PREFACTOR << endl;
 }
 
-int parse_input(int argc, char **argv, Fractal & f)
-{
-	if(argc == 1 || argc < 4)
+int 
+parse_input(int argc, char **argv, Fractal & f) {
+	if (argc == 1 || argc < 4) {
 		return -1;
-	else
-	{
+    } else {
 		cout << "Converting" << endl;
-		double Df = atof(argv[1]), kf = atof(argv[2]);
+		double Df = atof(argv[1]);
+        double kf = atof(argv[2]);
 		int size = atoi(argv[3]);
-		if(Df >= 1.0 && Df <= 2)
-		{
+		if (Df >= 1.0 && Df <= 2) {
 			f.set_Df(Df);
-		}
-		else
-		{
+		} else {
 			print_input_error(argv[0],"Invalid Fractal Dimension.  Range: [1.0, 2.0]");
 			return -1;
 		}
 		
-		if(kf >= 1.0)
-		{
+		if (kf >= 1.0) {
 			f.set_kf(kf);
-		}
-		else
-		{
+		} else {
 			print_input_error(argv[0],"Invalid Prefactor.  Range: [1.0, inf)");
 			return -1;
 		}
 		
-		if(size <= 0)
-		{
+		if (size <= 0) {
 			print_input_error(argv[0],"Invalid Size. Range: Integer > 0");
 			return -1;
-		}
-		else
-		{
+		} else {
 			cout << "Successfully Returning Size." << endl;
 			return size;
 		}
 	}
 }
 
-void fractal_creation(Fractal & base, int argc, const char** argv)
-{
+void 
+fractal_creation(Fractal & base, int argc, const char** argv) {
 	int fractal_size;
 	int n_argc = argc;
 	char **n_argv;
 	
 	n_argv = (char **)malloc(sizeof(char *) * 4);
-	for(int i = 0; i < 4; i++)
-	{
+	for (int i = 0; i < 4; i++) {
 		n_argv[i] = (char *) malloc(sizeof(char) * 128);
 	}
 	
-	for(int i = 0; i < argc; i++)
+	for (int i = 0; i < argc; i++)
 		strcpy(n_argv[i], argv[i]);
 	
 	base.clear();
 	
-	while(!((fractal_size = parse_input(n_argc, n_argv, base)) > 0))
-	{
+	while (!((fractal_size = parse_input(n_argc, n_argv, base)) > 0)) {
 		char answer[128];
-		do
-		{
+        for (;;) {
 			cout << "Proceed with prearranged program?(yes/no)" << endl;
 			cin >> answer;
 			if(strncmp(answer, "yes", 3) == 0)
@@ -263,14 +222,14 @@ void fractal_creation(Fractal & base, int argc, const char** argv)
 			{
 				cout << "Please answer \"yes\" or \"no\"." << endl;
 			}
-		}while(true);
+		}
 	}
-		
+    
 	generate_fractal(&base, fractal_size, true);
 }
 
-int main(int argc, const char **argv)
-{
+int
+main(int argc, const char **argv) {
 	int key;		
 	ifstream test;
 	ofstream output;
@@ -287,11 +246,11 @@ int main(int argc, const char **argv)
 		{
 			switch (key)
 			{
-				case ESCAPE:
+				case escape:
 					break;
-				case KEY_0:
+				case key_0:
 					fractal_creation(base, 1, argv);
-				case KEY_1:
+				case key_1:
 					while(!output.is_open())
 					{
 						cout << "Output File Name? (e.g. output.txt)" << endl;
@@ -311,7 +270,7 @@ int main(int argc, const char **argv)
 					base.structurec(output);
 					output.close();
 					break;
-				case KEY_2:
+				case key_2:
 					while(!output.is_open())
 					{
 						cout << "Output File Name? (e.g. output.txt)" << endl;
@@ -331,7 +290,7 @@ int main(int argc, const char **argv)
 					base.orient_random(output, 25, true);
 					output.close();
 					break;
-				case KEY_3:
+				case key_3:
 					cout << "Help:" << endl;
 					break;
 				default:
@@ -343,7 +302,7 @@ int main(int argc, const char **argv)
 		{
 			cout << "Generic Error: Probable failed creation of monomer." << endl;
 		}
-	} while(key != ESCAPE);
+	} while(key != escape);
 	
 	return 0;
 }

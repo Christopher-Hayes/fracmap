@@ -4,7 +4,6 @@
  * By Mark Garro
  * Date: September 06, 2007
  */
-
 #include "micrograph.h"
 #include "fractal.h"
 #include "settings.h"
