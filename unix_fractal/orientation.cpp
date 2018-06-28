@@ -1,10 +1,7 @@
-/*
- * orientation.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* orientation.cpp
+ * Modified: Mark Garro (09/06/07)
+ * Modified: Chris Hayes (06/28/18)
  */
-
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -35,7 +32,7 @@ void Fractal::orient_random(ofstream & output, unsigned int num_trials, bool sta
     {
       try
 	  {			
-	  seed = newOrientation = RandomVec();
+	  seed = newOrientation = random_vec();
 	  if( !stablize || find_stable_vector( seed, newOrientation ) ) //Second function is not called if stablize is false, thus we need to set newOrientation Correctly first.
 	    {
 	      rotate_newZ(newOrientation);
@@ -66,13 +63,13 @@ void Fractal::orient_random(ofstream & output, unsigned int num_trials, bool sta
 		  
 	      output << perDf.first << ", ";			  // 2d Perimeter Df Sorrenson; resize image, retake boundary
 	      output << abs(perDf.second) << ", ";        //R-squared (of above)
-	      output << _Df << ", ";                      // 3d Df
+	      output << _df << ", ";                      // 3d Df
 	      output << micro.Rg() << ", ";               // 2d Rg
-	      output << _Rg ;							  // 3d Rg
+	      output << _rg ;							  // 3d Rg
 	      output << endl;
 				
 	      success++;
-	      cout << "successess = " << success << " of " << num_trials << ": " << _Df << " " << _fractal.size() << endl;
+	      cout << "successess = " << success << " of " << num_trials << ": " << _df << " " << _fractal.size() << endl;
 	    } else
 	    {
 	      cout << "failure" << endl;
@@ -90,7 +87,7 @@ void Fractal::orient_random(ofstream & output, unsigned int num_trials, bool sta
 
       //Restore the fractal to the original points after a rotation
       //In order to avoid compounding floating point errors due to repeated rotations
-      _Rmean = backupCM;
+      _r_mean = backupCM;
       _fractal = backupMonos; 
     }
   
@@ -122,11 +119,11 @@ void Fractal::rotate_newZ( Vector_3 newZ )
     }
 	
   //Rotate the center.
-  Temp = _Rmean;
+  Temp = _r_mean;
 	
-  _Rmean.x = RotMatrix[0] * Temp.x     + RotMatrix[1] * Temp.y     + RotMatrix[2] * Temp.z;
-  _Rmean.y = RotMatrix[0 + 3] * Temp.x + RotMatrix[1 + 3] * Temp.y + RotMatrix[2 + 3] * Temp.z;
-  _Rmean.z = RotMatrix[0 + 6] * Temp.x + RotMatrix[1 + 6] * Temp.y + RotMatrix[2 + 6] * Temp.z;
+  _r_mean.x = RotMatrix[0] * Temp.x     + RotMatrix[1] * Temp.y     + RotMatrix[2] * Temp.z;
+  _r_mean.y = RotMatrix[0 + 3] * Temp.x + RotMatrix[1 + 3] * Temp.y + RotMatrix[2 + 3] * Temp.z;
+  _r_mean.z = RotMatrix[0 + 6] * Temp.x + RotMatrix[1 + 6] * Temp.y + RotMatrix[2 + 6] * Temp.z;
   
 	
   for(vector<Vector_3>::iterator iter = _facets.begin(); iter != _facets.end(); iter++)
@@ -234,7 +231,7 @@ bool Fractal::check_last_facet( vector<Vector_3>& _facets )
   bool facetGood = true;
   for(vector<Vector_3>::iterator iter = _facets.end() - 3; iter < _facets.end(); iter++)
     {
-      if( maxPoint*dir >= (*iter)*dir + FILTER_DEPTH )
+      if( maxPoint*dir >= (*iter)*dir + filter_depth )
 	{
 	  facetGood = false;
 	  cout << maxPoint.x << " " << maxPoint.y << " " << maxPoint.z << endl;

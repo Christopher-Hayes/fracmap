@@ -1,12 +1,8 @@
-/*
- *  LinRegression.h
- *  wxFracMap
- *
- *  Created by Shammah Chancellor and Mark Garro on 18/05/2009.
- *  Copyright 2009 University Of Neveda, Reno. All rights reserved.
- *
+/* LinRegression.h
+ * Created by Shammah Chancellor and Mark Garro on 18/05/2009.
+ * Copyright 2009 University Of Neveda, Reno. All rights reserved.
+ * Modified: Chris Hayes (06/28/18)
  */
-
 template<class X, class Y>
 class LinRegression
   {

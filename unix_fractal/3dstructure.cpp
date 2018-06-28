@@ -34,8 +34,8 @@ void Fractal::structurec(ofstream & output)
 
 	cout << "Vector_3 coordinates stored." << endl;
 
-	qmin = 2 * PI / num_parts * 0.1;
-	qmax = 2 * PI / (2 * _a * PARTS_PER_RADIUS) * 2.0;
+	qmin = 2 * pi / num_parts * 0.1;
+	qmax = 2 * pi / (2 * _a * parts_per_radius) * 2.0;
 	qfactor = pow( (qmax / qmin), (1.0 / ((double)STRUCTURE_ITER - 1.0)) );
 
 	for(int i = 0; i < STRUCTURE_ITER; i++)
@@ -45,7 +45,7 @@ void Fractal::structurec(ofstream & output)
 
 		for(int j = 0; j < ANG_ITER; ++j)
 		{	
-		    qvec = RandomVec();
+		    qvec = random_vec();
 			qvec *= qval;
 		  
 		    Resum = 0.0;
@@ -85,26 +85,26 @@ void Fractal::create_box()
 
 		for(vector<Vector_3>::iterator iter = _fractal.begin(); iter != _fractal.end(); iter++)
 		{
-			if(_Rmean.distance(*iter) > box_length) box_length = _Rmean.distance(*iter);
+			if(_r_mean.distance(*iter) > box_length) box_length = _r_mean.distance(*iter);
 		}
 
 		box_length += _a + 1.0;
 		box_length *= 2;
 
-		num_parts = (int)(box_length/_a * PARTS_PER_RADIUS);
+		num_parts = (int)(box_length/_a * parts_per_radius);
 
 
 		for(vector<Vector_3>::iterator iter = _fractal.begin(); iter != _fractal.end(); iter++)
 		{
-			for(int xcoord = 0; xcoord <= (PARTS_PER_RADIUS * 2 + 1); ++xcoord)
+			for(int xcoord = 0; xcoord <= (parts_per_radius * 2 + 1); ++xcoord)
 			{
-				for(int ycoord = 0; ycoord <= (PARTS_PER_RADIUS * 2 + 1); ++ycoord)
+				for(int ycoord = 0; ycoord <= (parts_per_radius * 2 + 1); ++ycoord)
 				{
-					for(int zcoord = 0; zcoord <= (PARTS_PER_RADIUS * 2 + 1); ++zcoord)
+					for(int zcoord = 0; zcoord <= (parts_per_radius * 2 + 1); ++zcoord)
 					{
-						temp.initialize((GLdouble)xcoord/PARTS_PER_RADIUS - _a,
-							(GLdouble)ycoord/PARTS_PER_RADIUS - _a,
-							(GLdouble)zcoord/PARTS_PER_RADIUS - _a);
+            temp = Vector_3((double)xcoord / parts_per_radius - _a,
+                            (double)ycoord / parts_per_radius - _a,
+                            (double)zcoord / parts_per_radius - _a);
 						temp += *iter;
 						if(temp.distance(*iter) < _a)
 						{	

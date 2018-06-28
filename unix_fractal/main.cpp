@@ -1,43 +1,41 @@
 /* main.cpp - Program entry point.
- * Author: Mark Garro
- * Created: September 06, 2007
- * Modified: June 12, 2018 by Chris Hayes
+ * Created:  Mark Garro  (09/06/07)
+ * Modified: Chris Hayes (06/26/18)
  */
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <cstring>
+#include <string>
 #include <sstream>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
+using namespace std;
+
 #include "fractal.h"
+#include "log.hpp"
 #include "settings.h"
 #include "micrograph.h"
-using namespace std;
+#include "params.h"
+
 enum {escape, key_0, key_1, key_2, key_3};
 
 bool
 generate_fractal(Fractal *base, int fractal_size, bool output) {
-    // Create polynomer.
-    for (int removals=0; (int)base->size()<fractal_size;) {
-        // Attempt to create monomer.
-        if (base->create_monomer()) {
-            // Successfully created new monomer.
-            if (output) {
-                cout << "Fractal Size: " << (int)base->size() 
-                     << " of " << fractal_size << endl;
-            }
-        } else {
-            // Could not create monomer, removing...
-            if (output)
-                cout << "Removing last monomer." << endl;
-            base->remove_last();
-            removals++;
-        }
+  // Create polynomer.
+  for (int removals=0; (int)base->size() < fractal_size;) {
+    // Attempt to create monomer.
+    base->create_monomer();
+    // Successfully created new monomer.
+    if (output) {
+      cout << "Fractal Size: " << (int)base->size() 
+           << " of " << fractal_size << endl;
     }
+  }
 	return true;
 }
-
+// Testing? --------------------------------------------------------------------
 void
 pre_programmed_thread(int cpuNum, int cpus) {
   const int Min_Size = 10, Max_Size = 500;
@@ -82,51 +80,43 @@ pre_programmed_thread(int cpuNum, int cpus) {
 	}
   }
 }
-
-
+// Testing? --------------------------------------------------------------------
 void 
 pre_programmed() {
-	  const int cpus = 4;
-	  int* pids = new int[cpus];
-  
-	  //This is really rudimentary multithreading using fork.
-      //Pthreads should likely be used in the future, but since the threads don't need to communicate, fork works well.
-  
-	  for( int i = 0; i < cpus; i++ )
-	  {
-		if( ( pids[i] = fork() ) == 0 ) 
-		{
-		  pre_programmed_thread( i, cpus );
-		  exit(3); 
-		}
-		sleep ( 1 );  //So they have different random seeds.
-	  }
-		   
-	  for( int i = 0; i < cpus; i++ )
-	  {
-		int status = 0;
-		do
-		{
-		  waitpid(pids[i], &status, 0);
-		} while( !WIFEXITED( status) );
-	  }
-}
+  const int cpus = 4;
+  int* pids = new int[cpus];
 
+  // This is really rudimentary multithreading using fork.
+  // Pthreads should likely be used in the future, but since the threads don't need to communicate, fork works well.
+
+  for (int k=0; k<cpus; k++) {
+    if ((pids[k] = fork()) == 0) {
+      pre_programmed_thread(k, cpus);
+      exit(3); 
+    }
+    sleep(1); // Different seeds
+  }
+
+  for (int k=0; k<cpus; k++) {
+    int status = 0;
+    do {
+      waitpid(pids[k], &status, 0);
+    } while(!WIFEXITED(status));
+  }
+}
+// Print function menu ---------------------------------------------------------
 void 
-print_menu(Fractal & base) {
-	cout << "Fractal Parameters: ";
-	cout << "N = " << base.size() << ",\t";
-	
-	cout << endl;
-	cout << "Choose an option to continue." << endl;
-	cout << "Fractal menu:" << endl;
-	cout << "\t" << escape  << ": Exit" << endl;
-	cout << "\t" << key_0  << ": Clear current fractal and create a new fractal" << endl;
-	cout << "\t" << key_1  << ": Calculate Structure Factor of Current Fractal" << endl;
-	cout << "\t" << key_2  << ": 2D Micrograph Analysis" << endl;
-	cout << "\t" << key_3  << ": Help" << endl;
+print_menu() {
+	cout << "Choose an option to continue."
+	     << "\nFractal menu:"
+	     << "\n\t" << escape << ": Exit"
+	     << "\n\t" << key_0 << ": Clear current fractal and create a new fractal"
+	     << "\n\t" << key_1 << ": Calculate Structure Factor of Current Fractal"
+	     << "\n\t" << key_2 << ": 2D Micrograph Analysis"
+	     << "\n\t" << key_3 << ": Help" << endl;
 }
-
+// Get user input --------------------------------------------------------------
+/*
 int 
 get_user_input(Fractal & base) {
 	int key;
@@ -134,20 +124,9 @@ get_user_input(Fractal & base) {
 	cin >> key;
 	return key;
 }
-
-void 
-print_input_error(const char *program_name, const char *error_msg) {
-	cerr << "Error: " << error_msg << endl;
-	cerr << "Usage:" << endl;
-	cerr << "\t" << program_name << " Df kf N" << endl;
-	cerr << "or, using default values," << endl;
-	cerr << "\t" << program_name << " N" << endl;
-	cerr << endl;
-	cerr << "Default Values:" << endl;
-	cerr << "\tFractal Dimension (Df):\t" << FRACTAL_DIMENSION << endl;
-	cerr << "\tPrefactor (kf):\t" << PREFACTOR << endl;
-}
-
+*/
+// Parse user input. -----------------------------------------------------------
+/*
 int 
 parse_input(int argc, char **argv, Fractal & f) {
 	if (argc == 1 || argc < 4) {
@@ -157,10 +136,10 @@ parse_input(int argc, char **argv, Fractal & f) {
 		double Df = atof(argv[1]);
         double kf = atof(argv[2]);
 		int size = atoi(argv[3]);
-		if (Df >= 1.0 && Df <= 2) {
+		if (Df >= 1.0 && Df <= 3.0) {
 			f.set_Df(Df);
 		} else {
-			print_input_error(argv[0],"Invalid Fractal Dimension.  Range: [1.0, 2.0]");
+			print_input_error(argv[0],"Invalid Fractal Dimension.  Range: [1.0, 3.0]");
 			return -1;
 		}
 		
@@ -180,9 +159,11 @@ parse_input(int argc, char **argv, Fractal & f) {
 		}
 	}
 }
-
+*/
+// Generate fractal ------------------------------------------------------------
+/*
 void 
-fractal_creation(Fractal & base, int argc, const char** argv) {
+create_fractal(Fractal& base, int argc, char** argv) {
 	int fractal_size;
 	int n_argc = argc;
 	char **n_argv;
@@ -209,11 +190,11 @@ fractal_creation(Fractal & base, int argc, const char** argv) {
 			}
 			else if(strncmp(answer, "no", 2) == 0)
 			{
-				cout << "Fractal Dimension?" << endl;
+				cout << "Fractal Dimension? Range: [1.0, 3.0]" << endl;
 				cin >> n_argv[1];
-				cout << "Prefactor?" << endl;
+				cout << log_bold_white << "Prefactor? Range: [1.0, inf)" << endl;
 				cin >> n_argv[2];
-				cout << "Fractal Size?" << endl;
+				cout << "Fractal Size? (Integer greater than 0)" << endl;
 				cin >> n_argv[3];
 				n_argc = 4;
 				break;
@@ -227,82 +208,170 @@ fractal_creation(Fractal & base, int argc, const char** argv) {
     
 	generate_fractal(&base, fractal_size, true);
 }
+*/
+// Open output file ------------------------------------------------------------
+void open_output(ofstream& output) {
+  string filename = "";
 
+  // Open ofstream
+  for (;;) {
+    cout << "Output File Name? (e.g. output.txt)" << endl;
+    cin >> filename;
+    // Check that file doesn't already exists. access() is a sys/stat.h function
+    if (access(filename.c_str(), F_OK) == -1)
+      break;
+    Log::warn("file already exists.");
+  }
+
+  output.open(filename.c_str());
+}
+// Compute structure factor ----------------------------------------------------
+void
+struct_factor(Fractal& base) {
+  // Get output file
+  ofstream output;
+  open_output(output);
+
+  // Compute structure factor
+  base.structurec(output);
+
+  output.close();
+}
+// Compute 2D micrograph analysis ----------------------------------------------
+void
+micro_analysis(Fractal& base) {
+  // Get output file
+  ofstream output;
+  open_output(output);
+
+  // Compute 2D micrograph analysis
+  base.orient_random(output, 25, true);
+
+  output.close();
+}
+// Fractal Creation ============================================================
+void
+fractal_params(double& df, double& kf, int& n) {
+
+}
+// Input Validation ============================================================
+// Validate Fractal Dimension --------------------------------------------------
+void
+validate_df(double& df) {
+  // Prompt for value if not passed in CLI
+  if (df == -1.0) {
+    cout << "Fractal Dimension (decimal value within [1.0, 3.0])\n: ";
+    cin >> df; // TODO: bad input
+  }
+  for (;;) {
+    // Check value is within bounds
+    if (df >= 1.0 && df <= 3.0)
+      break;
+    Log::warn("Fractal Dimension is invalid. It must be a double within the bounds [1.0, 3.0]\n");
+    cout << "New Fractal Dimension: ";
+    cin >> df;
+  }
+  Log::info("Good input: fractal dimension");
+}
+// Validate Prefactor ----------------------------------------------------------
+void
+validate_kf(double& kf) {
+  // Prompt for value if not passed in CLI
+  if (kf == -1.0) {
+    cout << "Prefactor (decimal value within [1.0, inf) )\n: ";
+    cin >> kf; // TODO: bad input
+  }
+  for (;;) {
+    // Check value is within bounds
+    if (kf >= 1.0)
+      break;
+    Log::warn("Prefactor is invalid. It must be a double within the bounds [1.0, inf)\n");
+    cout << "New Prefactor: ";
+    cin >> kf;
+  }
+  Log::info("Good input: prefactor");
+}
+// Validate Monomer Count ------------------------------------------------------
+void
+validate_n(int& n) {
+  // Prompt for value if not passed in CLI
+  if (n == -1.0) {
+    cout << "Monomer count (integer value greater than 0)\n: ";
+    cin >> n; // TODO: bad input
+  }
+  for (;;) {
+    // Check value is within bounds
+    if (n > 0)
+      break;
+    Log::warn("Monomer count is invalid. It must be an integer with the bounds [1, inf)\n");
+    cout << "New Monomer Count: ";
+    cin >> n;
+  }
+  Log::info("Good input: monomer count");
+}
+// Program entry point ---------------------------------------------------------
 int
-main(int argc, const char **argv) {
-	int key;		
-	ifstream test;
-	ofstream output;
+main(int argc, char **argv) {
+  srand((unsigned int)time(NULL));
+
+  Params p = Params(argc, argv);
+  // Quit out if usage/help parameter is active.
+  if (p.check_usage())
+    return 0;
+  // Verbose
+  if (p.check_verbose()) {
+    log_info = true;
+    Log::info("Verbose mode ON");
+  }
+
 	Fractal base;
-	char filename[128];
+  double df = -1; // Fractal Dimension
+  double kf = -1; // Prefactor
+  int n = -1; // Monomer Count
+
+  // Fractal Dimension
+  if (p.check_df())
+  // Prefactor
+  if (p.check_kf())
+    kf = p.get_kf();
+  // Monomer Count
+  if (p.check_n())
+    n = p.get_n();
 	
-	fractal_creation(base, argc, argv);
-	
-	do
-	{
-		key = get_user_input(base);	
-		
-		try
-		{
-			switch (key)
-			{
-				case escape:
-					break;
-				case key_0:
-					fractal_creation(base, 1, argv);
-				case key_1:
-					while(!output.is_open())
-					{
-						cout << "Output File Name? (e.g. output.txt)" << endl;
-						cin >> filename;
-						test.open(filename);
-						if (test.is_open())
-						{
-							cerr << "File already exists." << endl;
-							test.close();
-							continue;
-						}
-						else
-						{
-							output.open(filename);
-						}
-					}
-					base.structurec(output);
-					output.close();
-					break;
-				case key_2:
-					while(!output.is_open())
-					{
-						cout << "Output File Name? (e.g. output.txt)" << endl;
-						cin >> filename;
-						test.open(filename);
-						if (test.is_open())
-						{
-							cerr << "File already exists." << endl;
-							test.close();
-							continue;
-						}
-						else
-						{
-							output.open(filename);
-						}
-					}
-					base.orient_random(output, 25, true);
-					output.close();
-					break;
-				case key_3:
-					cout << "Help:" << endl;
-					break;
-				default:
-					cout << "Invalid menu option." << endl;
-					break;					
-			}
-		}
-		catch(...)
-		{
-			cout << "Generic Error: Probable failed creation of monomer." << endl;
-		}
-	} while(key != escape);
-	
+  // Program loop; on first run - new fractal
+	for (int key = key_0;;) {
+    switch (key)
+    {
+      case escape: // Quit
+        return 0;
+      case key_0: // New fractal
+        // Validate / get params
+        validate_df(df);
+        validate_kf(kf);
+        validate_n(n);
+        // Generate fractal
+        for (;(int)base.size() < n;) {
+          base.create_monomer();
+          // Log::info("Fractal size: " + std::to_string(base.size()) + "/" + std::to_string(n)); // TODO: figure out why c++11 is kicking in
+        }
+      case key_1: // Structure Factor
+        struct_factor(base);
+        break;
+      case key_2: // Micrograph analysis
+        micro_analysis(base);
+        break;
+      case key_3: // Help
+        cout << "Help:" << endl;
+        break;
+      default: // Catch all invalid input
+        Log::warn("Invalid menu option.\n");
+        break;					
+    }
+    // Print main menu; get user input
+    print_menu();
+    cin >> key;
+	}
+
+  Log::info("Program terminated successfully.\n");
 	return 0;
 }

@@ -1,13 +1,8 @@
-/*
- * fractal.h
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* fractal.h
+ * Created:  Mark Garro  (09/06/07)
+ * Modified: Chris Hayes (06/26/18)
  */
-
-#ifndef _FRACTAL_H
-#define _FRACTAL_H
-
+#pragma once
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -15,137 +10,107 @@
 #include <sstream>
 
 #include "settings.h"
-
+#include "Vector_3.h"
 using namespace std;
 
-class Fractal {
+class Fractal
+{
 public:
-	Fractal() { initialize(); }
+  // Constructors / Deconstructors =============================================
+	Fractal(Vector_3 center);
+	Fractal(double df=fractal_dimension, double kf=prefactor, double ol=1.0);
+	~Fractal() {}
 
-	Fractal(Vector_3 center)
-	{
-		_fractal.push_back(center);
-		initialize();
-	}
+  // Core operations ===========================================================
+  // Create/Add monomer
+	void add_monomer(double x, double y, double z);
+	void add_monomer(Vector_3 new_monomer);
+	Vector_3 add_random_monomer();
+	void create_monomer();
 
-	Fractal(double df, double prefactor, double _overlap = 1.0)
-	{
-		initialize();
-		_Df = df;
-		_kf = prefactor;
-		_oL = _overlap;
-	}
-
-	void initialize()
-	{	
-		srand((unsigned int)time(NULL));
-
-		_a = MEAN_RADIUS;
-		_N = 0;
-		_Df = FRACTAL_DIMENSION;
-		_kf = PREFACTOR;
-		_Rg = 0;
-		_oL = 1.0;
-		
-		_Rmean.initialize(0.0f, 0.0f, 0.0f);
-		_Rsum.initialize(0.0f, 0.0f, 0.0f);
-		_Rsquared = 0;
-	}
-
-	~Fractal(){}
-
-	//
-	// METHODS
-	//
-
-	bool add_monomer(GLdouble x, GLdouble y, GLdouble z);
-	bool add_monomer(Vector_3 new_monomer);
-	
-	Vector_3 create_random_attached_monomer();
-  
-	bool create_monomer();
 	void clear();
 	
-	bool MonteCarlo();
-	double N();
-	bool overlap(const Vector_3 & monomer);
-	void parameter_update(); //Update based on maintained SUM(R^2) and Rmean 
-	void parameter_update_complete(); //Update and calculate new sums.
+	void monte_carlo();
+	bool overlap(const Vector_3& monomer);
+
+  // Update
+	void parameter_update();
   
 	double test_rg(Vector_3 monomer);
   
-	Vector_3 random_monomer();
+	Vector_3 get_random_monomer();
 	void remove_last();
 	Vector_3 return_last();		
 
-	unsigned int size()			  { return _N; }
-	void set_Df(double Df)		  { _Df = Df; }
-	double get_Df()				  { return _Df; }
-	void set_kf(double kf)		  { _kf = kf; }
-	double get_kf()				  { return _kf; }
-	double radius()				  {	return _a; }
+  // Getters
+	double N(); // Where is this function?
+	double get_df() const { return _df; }
+	double get_kf() const { return _kf; }
+	double radius() const {	return _a; }
+	Vector_3 rmean() const { return _r_mean; }
+	Vector_3 cm() const { return _r_mean; }
+	double rg() const { return _rg; }
+	vector<Vector_3>& monomers() { return _fractal;}
   
-  
-	Vector_3 rmean()			  { return _Rmean; }
-	Vector_3 cm()				  { return _Rmean; }
-	double Rg()					  { return _Rg; }
-  
-  
-  int begin()					  { return 0; }
-  int end()						  { return _fractal.size(); }
-  Vector_3 & grab(int i)		  {	return _fractal[i]; }
-  Vector_3 operator[](int i)	  { return _fractal[i]; }
+  // Vector-like operations
+	unsigned int size() const { return _n; }
+  int begin() const { return 0; }
+  int end() const { return _fractal.size(); }
+  Vector_3 return_last() const { return _fractal.back(); }
+  Vector_3& grab(int i) {	return _fractal[i]; }
+  Vector_3 operator[](int i) { return _fractal[i]; }
 
-	vector<Vector_3> & monomers() {return _fractal;}
-	
-	//Structure Constant stuff
+  // Setters
+	void set_Df(double df) { _df = df; }
+	void set_kf(double kf) { _kf = kf; }
+
+	// Structure constant functions
 	void create_box();
 	void structurec(ofstream & output);
 	
 	void orient_random(ofstream & output, unsigned int num_trials = 25, bool stablize = true);
 	void rotate_newZ( Vector_3 newZ );
   
-	//Begin ConvexHullCodes
+	// Convex hull codes
 	Vector_3& max_point(Vector_3 direction);
 	Vector_3& min_angle_point(Vector_3 head, Vector_3 tail, Vector_3 dir);
-	bool find_stable_vector( Vector_3 seed, Vector_3 & stableOut );
-	void find_first_facet( vector<Vector_3>& facets, Vector_3 seed );
-	void find_next_facet( vector<Vector_3>& facets );
-	Vector_3 last_facet_normal( vector<Vector_3> facets );
-	bool cm_proj_in_facet( vector<Vector_3>& facets );
-	
-	bool check_last_facet( vector<Vector_3>& _facets );
-	///End ConvexHull
+
+	bool find_stable_vector(Vector_3 seed, Vector_3 & stableOut);
+	void find_first_facet(vector<Vector_3>& facets, Vector_3 seed);
+	void find_next_facet(vector<Vector_3>& facets);
+
+	Vector_3 last_facet_normal(vector<Vector_3> facets);
+	bool cm_proj_in_facet(vector<Vector_3>& facets);
+	bool check_last_facet(vector<Vector_3>& _facets);
 
 	static bool last_trial;
 
 	vector<Vector_3> points;
 	bool box_created;
 
-	vector<Vector_3> _facets; //Temporary debug for surface detection
+	vector<Vector_3> _facets; // Temporary debug for surface detection
 	
 private:
-	vector<Vector_3> _fractal; // A vector of the centers of the monomers
+  // A vector containing the centers of the monomers.
+	vector<Vector_3> _fractal;
 	
+	// Overlap parameters
+	double _ol;  // in percent
+	// Fixed parameters
+	double _df, _kf, _a;
   
-	//Overlap Param
-	double _oL;  // in percent
-	//Fixed parameters
-	double _Df, _kf, _a;
-  
-	//For linear time calculation of Rg
-	Vector_3 _Rsum;  
-	double _Rsquared;
+  // Rg linear time calculations
+	Vector_3 _r_sum;  
+	double _r_squared;
 	
-	//Parameters which are updated from the above.
-	Vector_3 _Rmean;
-	double _Rg;
-	int _N;
+  // Dependent parameters
+	Vector_3 _r_mean;
+	double _rg;
+	int _n;
 	
 	double box_length;
 	int num_parts;
 };
 
+// ?
 double psdrand(int);
-
-#endif

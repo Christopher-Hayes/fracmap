@@ -1,10 +1,6 @@
-/*
- * perdf.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* boxcountDf.cpp
+ * Modified: Mark Garro (09/06/07)
  */
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -14,6 +10,7 @@
 
 #include "settings.h"
 #include "fractal.h"
+#include "LinRegression.h"
 #include "micrograph.h"
 
 //Mass ball counting.

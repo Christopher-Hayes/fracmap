@@ -37,7 +37,7 @@ double Micrograph::Perimeter() const
 
 double Micrograph::Nproj() const
 {
-  return points.size() / (PI *(_monomer_radius*_monomer_radius));
+  return points.size() / (pi *(_monomer_radius*_monomer_radius));
 }
 
 //SC - 2009-03-19
@@ -128,7 +128,7 @@ void Micrograph::make_pixels(Fractal & _fractal)
 	}
 		
 	double xSize = max_x - min_x, ySize = max_y - min_y;
-	unsigned int m_len = (int)ceil(max( xSize, ySize) + 2 * ri ) * PARTS_PER_RADIUS;
+	unsigned int m_len = (int)ceil(max( xSize, ySize) + 2 * ri ) * parts_per_radius;
 	
 	m_len = m_len + 8 - m_len % 8;
 	
@@ -150,8 +150,8 @@ void Micrograph::make_pixels(Fractal & _fractal)
 			{
 				if( ((j)*(j) + (k)*(k)) < ri * ri)
 				{
-					pixels[(int)floor((curr_pt.x - min_x + j) * PARTS_PER_RADIUS)]
-						  [(int)floor((curr_pt.y - min_y + k) * PARTS_PER_RADIUS)]
+					pixels[(int)floor((curr_pt.x - min_x + j) * parts_per_radius)]
+						  [(int)floor((curr_pt.y - min_y + k) * parts_per_radius)]
 							= true;
 				}
 			}

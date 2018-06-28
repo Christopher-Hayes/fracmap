@@ -1,10 +1,7 @@
-/*
- * perdf.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* sorensenDf.cpp
+ * Modified: Mark Garro (09/06/07)
+ * Modified: Chris Hayes (06/28/18)
  */
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -14,6 +11,7 @@
 
 #include "settings.h"
 #include "fractal.h"
+#include "LinRegression.h"
 #include "micrograph.h"
 
 const unsigned int GRID_STEPS = 25;
