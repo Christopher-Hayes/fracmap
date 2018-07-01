@@ -3,25 +3,29 @@
  * Modified: Chris Hayes (06/26/18)
  */
 #pragma once
-#include <iostream>
-#include <vector>
+#include <cmath>
 #include <cstdlib>
-#include <time.h>
+#include <fstream>
+#include <iostream>
 #include <sstream>
+#include <time.h>
+#include <vector>
 
+#include "log.h"
 #include "settings.h"
 #include "Vector_3.h"
-using namespace std;
 
 class Fractal
 {
 public:
   // Constructors / Deconstructors =============================================
-	Fractal(Vector_3 center);
-	Fractal(double df=fractal_dimension, double kf=prefactor, double ol=1.0);
+	// Fractal(Vector_3 center);
+	Fractal(double df=fractal_dimension, double kf=prefactor, double k=overlap);
 	~Fractal() {}
 
   // Core operations ===========================================================
+  void generate_fractal(int size);
+	void monte_carlo();
   // Create/Add monomer
 	void add_monomer(double x, double y, double z);
 	void add_monomer(Vector_3 new_monomer);
@@ -30,8 +34,7 @@ public:
 
 	void clear();
 	
-	void monte_carlo();
-	bool overlap(const Vector_3& monomer);
+	bool check_overlap(const Vector_3& monomer);
 
   // Update
 	void parameter_update();
@@ -50,7 +53,7 @@ public:
 	Vector_3 rmean() const { return _r_mean; }
 	Vector_3 cm() const { return _r_mean; }
 	double rg() const { return _rg; }
-	vector<Vector_3>& monomers() { return _fractal;}
+	std::vector<Vector_3>& monomers() { return _fractal;}
   
   // Vector-like operations
 	unsigned int size() const { return _n; }
@@ -66,9 +69,9 @@ public:
 
 	// Structure constant functions
 	void create_box();
-	void structurec(ofstream & output);
+	void structurec(std::ofstream& output);
 	
-	void orient_random(ofstream & output, unsigned int num_trials = 25, bool stablize = true);
+	void orient_random(std::ofstream& output, unsigned int num_trials = 25, bool stablize = true);
 	void rotate_newZ( Vector_3 newZ );
   
 	// Convex hull codes
@@ -76,28 +79,22 @@ public:
 	Vector_3& min_angle_point(Vector_3 head, Vector_3 tail, Vector_3 dir);
 
 	bool find_stable_vector(Vector_3 seed, Vector_3 & stableOut);
-	void find_first_facet(vector<Vector_3>& facets, Vector_3 seed);
-	void find_next_facet(vector<Vector_3>& facets);
+	void find_first_facet(std::vector<Vector_3>& facets, Vector_3 seed);
+	void find_next_facet(std::vector<Vector_3>& facets);
 
-	Vector_3 last_facet_normal(vector<Vector_3> facets);
-	bool cm_proj_in_facet(vector<Vector_3>& facets);
-	bool check_last_facet(vector<Vector_3>& _facets);
-
-	static bool last_trial;
-
-	vector<Vector_3> points;
-	bool box_created;
-
-	vector<Vector_3> _facets; // Temporary debug for surface detection
+	Vector_3 last_facet_normal(std::vector<Vector_3> facets);
+	bool cm_proj_in_facet(std::vector<Vector_3>& facets);
+	bool check_last_facet(std::vector<Vector_3>& _facets);
 	
 private:
   // A vector containing the centers of the monomers.
-	vector<Vector_3> _fractal;
+	std::vector<Vector_3> _fractal;
 	
-	// Overlap parameters
-	double _ol;  // in percent
 	// Fixed parameters
-	double _df, _kf, _a;
+  double _df; // Fractal dimension
+  double _kf; // Prefactor
+  double _a;  // Radius?
+  double _k;  // Monomer overlap factor
   
   // Rg linear time calculations
 	Vector_3 _r_sum;  
@@ -110,6 +107,15 @@ private:
 	
 	double box_length;
 	int num_parts;
+
+  // Put these in private..
+
+	static bool last_trial; // ?
+
+	std::vector<Vector_3> points; // What is this for when there's _fractal?
+	bool box_created;
+
+	std::vector<Vector_3> _facets; // Temporary debug for surface detection
 };
 
 // ?

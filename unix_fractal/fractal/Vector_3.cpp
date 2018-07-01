@@ -1,13 +1,11 @@
-/*
- * Vector_3.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* Vector_3.cpp
+ * Modified: Mark Garro (09/06/07)
+ * Modified: Chris Hayes (06/29/18)
  */
 #include "settings.h"
 #include "Vector_3.h"
 
-const Vector_3 Vector_3::_center = Vector_3(0,0,0);
+using namespace std;
 
 double tri_area(Vector_3 pt1, Vector_3 pt2, Vector_3 pt3) {
   Vector_3 a = pt2 - pt1;
@@ -122,6 +120,12 @@ X(const Vector_3 rhs) const {
   return Vector_3(y*rhs.z - z*rhs.y, z*rhs.x - x*rhs.z, x*rhs.y - y*rhs.x);
 }
 
+// Print -----------------------------------------------------------------------
+string Vector_3::
+print() const {
+  return "(" + to_string(x) + ", " + to_string(y) + ", " + to_string(z) + ")";
+}
+
 // Vector overloads ============================================================
 // Vector_3 * Vector_3 ---------------------------------------------------------
 double Vector_3::
@@ -131,9 +135,9 @@ operator*(const Vector_3 rhs) const {
 // Vector_3 + Vector_3 ---------------------------------------------------------
 Vector_3 Vector_3::
 operator+(const Vector_3& rhs) const {
-  Vector_3 temp(this->x + rhs.x,
-		            this->y + rhs.y,
-		            this->z + rhs.z);
+  Vector_3 temp(x + rhs.x,
+		            y + rhs.y,
+		            z + rhs.z);
   return temp;
 }
 // Vector_3 - Vector_3 ---------------------------------------------------------

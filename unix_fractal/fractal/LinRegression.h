@@ -1,8 +1,9 @@
 /* LinRegression.h
- * Created by Shammah Chancellor and Mark Garro on 18/05/2009.
- * Copyright 2009 University Of Neveda, Reno. All rights reserved.
- * Modified: Chris Hayes (06/28/18)
+ * Modified: (05/18/09) Shammah Chancellor, Mark Garro (05/18/09). Copyright 2009 University Of Neveda, Reno. All rights reserved.
+ * Modified: (07/01/18) Chris Hayes
  */
+#include <vector>
+
 template<class X, class Y>
 class LinRegression
   {
@@ -71,8 +72,8 @@ class LinRegression
 	bool set;
 	
   private:
-	vector<X> x;
-	vector<Y> y;
+  std::vector<X> x;
+  std::vector<Y> y;
 	double Sxx, Syy, Sxy;
 	double xbar, ybar;
 	

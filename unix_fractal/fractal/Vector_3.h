@@ -1,12 +1,11 @@
 /* Vector_3.h
- * Created: Shammah Chancellor (02/13/09)
- *          Copyright 2009 University of Nevada, Reno. All rights reserved.
- *
- * Modified: Chris Hayes (06/26/18)
- *           Copyright 2018 University of New Haven, CT. All rights reserved.
+ * Created:  (02/13/09) Shammah Chancellor. Copyright 2009 University of Nevada, Reno. All rights reserved.
+ * Modified: (06/26/18) Chris Hayes
  */
 #pragma once
-#include "log.hpp"
+#include <string>
+
+#include "log.h"
 
 class Vector_3
 {
@@ -21,6 +20,7 @@ public:
 	double square_difference(Vector_3 target) const;
 	double magnitude() const;
 	Vector_3 normalize() const;
+  std::string print() const;
   // Operator overloads
 	Vector_3 operator-(const Vector_3& rhs) const;
 	Vector_3 operator+(const Vector_3& rhs) const;
@@ -37,12 +37,6 @@ public:
 	
 	Vector_3 & operator=(const Vector_3& o);
 	bool operator==(const Vector_3& b) const;
-	// ?
-	static Vector_3 center() { return _center; }
-
-private:
-  // ?
-	static const Vector_3 _center;
 };
 
 // ?
