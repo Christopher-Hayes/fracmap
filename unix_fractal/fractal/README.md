@@ -6,6 +6,10 @@ Cross-platform software for simulating carbon pseudo-fractal agglomerates and an
 
 ### Prerequisites
 
+_GUI is a work-in-progress_
+<del>
+#### FracMAP GUI
+
 Download, build, and compile wxWidgets. The latest release can be found at:
 
 https://github.com/wxWidgets/wxWidgets/releases
@@ -18,27 +22,33 @@ Please install wxWidgets in the root folder:
     Linux: /wxWidgets
 
 If installing elsewhere, redirect the project dependencies to the chosen location.
+</del>
 
 ### Installing
 
+_Currently, only the Linux Makefile has been updated_
+<del>
 #### Windows Install
 
-Microsoft Visual Studio (MSV) 2005 workspace and project files have been included in
+" Microsoft Visual Studio (MSV) 2005 workspace and project files have been included in
 the source code distribution.
 
 **To build executable:**
 
 1) Open the Microsoft Visual Studio Solution file `Unix_Fractal.sln` from within MSV.
 
-2) Select Build->Build Unix_Fractal_final.
+2) Select Build -> Build Unix\_Fractal\_final.
 
 You will find `Unix_Fractal.exe` to the `./debug` directory.
+</del>
 
 #### Linux Install
 
+##### FracMAP Command Line Interface 
+
 Included with the source code should be the makefile, `Makefile`.
 
-Change directory to `./Unix_Fractal` where the makefile and base code should be found.
+Change directory to `./Unix_Fractal/fractal` where the makefile and base code should be found.
 
 Execute on the command line:
 
@@ -46,7 +56,7 @@ Execute on the command line:
 make -f Makefile
 ```
 
-The build should create the executable file `fractal` in the same directory, `./Unix_Fractal/fractal`.
+The build should create the executable file `fracmap` in the same directory, `./Unix_Fractal/fractal`.
 
 ### Executing
 
@@ -55,14 +65,14 @@ The build should create the executable file `fractal` in the same directory, `./
 From the command line, execution without parameters (accomplished by double-clicking the executable in Windows):
 **You can either:**
 
-1) Double click the file in Windows or Linux.
+1) Double click the file in <del>Windows or</del> Linux.
 
 or
 
-2) Execute on the command line from the `./Unix_Fractal` directory.
+2) Execute on the command line from the `./Unix_Fractal/fractal` directory.
 
 ```
-./fractal
+./fracmap
 ```
 
 This method will prompt the user for the expected parameters for fractal creation program.
@@ -70,51 +80,104 @@ This method will prompt the user for the expected parameters for fractal creatio
 The program will proceed as follows:
 
 ```
-Fractal Dimension?
-<Type the value and hit enter>
+Fractal Dimension (decimal value within [1.0, 3.0])
+: <Type the value and hit enter>
 
-Prefactor?
-<Type the value and hit enter>
+Prefactor (decimal value within [1.0, inf) )
+: <Type the value and hit enter>
 
-Fractal Size?
-<Type the value and hit enter>
+Monomer count (integer value greater than 0)
+: <Type the value and hit enter>
+
+Overlap Factor (decimal value within [0.5, 1.0] )
+: <Type the value and hit enter>
+
 ```
 
 **Example:**
 ```
-Fractal Dimension?
-2.0
+Fractal Dimension (decimal value within [1.0, 3.0])
+: 2.3
 
-Prefactor?
-1.19
+Prefactor (decimal value within [1.0, inf) )
+: 45.4
 
-Fractal Size?
-10
+Monomer count (integer value greater than 0)
+: 21
+
+Overlap Factor (decimal value within [0.5, 1.0] )
+: 0.6
 ```
 
 #### Method 2: With command line arguments.
 
-Command line execution given specified parameters:
+Run `./fracmap -h` to print the usage comment shown below.
+
 
 ```
-./fractal <fractal_dimension> <prefactor> <size>
-```
 
-**Example:**
-```
-./fractal 2.0 1.19 10
+	fracMAP v07.01.18
+
+Usage:
+
+	./fracmap [Options]
+
+
+Inline Command Arguments (program will prompt in absence)
+
+ Fractal Dimension
+  -d <fractal dimension> --fractal_dimension <fractal dimension>
+  Expects decimal value with the range of [1.0, 3.0]
+
+ Prefactor
+  -p <prefactor> --prefactor <prefactor>
+  Expects decimal value with the range of [1.0, inf)
+
+ Monomer Count
+  -n <monomer count> --monomers <monomer count>
+  Expects integer value greater than 0
+
+ Overlap Factor
+  -k <overlap factor> --overlap <overlap factor>
+  Expects decimal value with the range of [0.5, 1.0]
+
+
+OUTPUT:
+
+ File Output
+  -o <destination> --output <destination>
+  Log output to file
+
+ Verbose
+  -b --verbose
+  Verbose output
+
+
+MISC:
+
+ Help
+  -h --help --usage
+  Print this help summary page
+
+ Version
+  -v --version
+  Get program version
+
+
+EXAMPLES:
+
+  ./fracmap -d 1.8 -p 3.4 -n 13 -k 0.8 -o out.txt
+
+  ./fracmap --fractal_dimension 2.4 --output output.txt -b
+
 ```
 
 #### Execution continued..
-
-With both methods, a fractal will be generated with Df equal to `fractal_dimension`,
-kf equal to "prefactor", and of size equal to "size".
 
 Following successful fractal generation, the program will request user input for any
 proceeding analysis to be done.
 
 ```
-Fractal Paramters: N = <size>
 Choose an option to continue.
 
 Fractal menu:
