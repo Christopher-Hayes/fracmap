@@ -38,7 +38,7 @@ generate_fractal(int target_size) {
     create_monomer();
     cout << "Fractal size: " << (int)size() << " of " << target_size << endl;
   }
-  Log::info("Fractal generated.");
+  cout << "Fractal successfully generated." << endl;
 }
 // Add new monomer -------------------------------------------------------------
 void Fractal::

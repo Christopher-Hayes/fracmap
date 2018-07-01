@@ -25,7 +25,7 @@ enum {escape, key_0, key_1, key_2, key_3};
 // Print function menu ---------------------------------------------------------
 void 
 print_menu() {
-	cout << "Choose an option to continue."
+	cout << "\nChoose an option to continue."
 	     << "\nFractal menu:"
 	     << "\n\t" << escape << ": Exit"
 	     << "\n\t" << key_0 << ": Clear current fractal and create a new fractal"
@@ -79,7 +79,7 @@ void
 validate_df(double& df) {
   // Prompt for value if not passed in CLI
   if (df == -1.0) {
-    cout << "Fractal Dimension (decimal value within [1.0, 3.0])\n: ";
+    cout << "\nFractal Dimension (decimal value within [1.0, 3.0])\n: ";
     cin >> df; // TODO: bad input
   }
   for (;;) {
@@ -97,7 +97,7 @@ void
 validate_kf(double& kf) {
   // Prompt for value if not passed in CLI
   if (kf == -1.0) {
-    cout << "Prefactor (decimal value within [1.0, inf) )\n: ";
+    cout << "\nPrefactor (decimal value within [1.0, inf) )\n: ";
     cin >> kf; // TODO: bad input
   }
   for (;;) {
@@ -115,7 +115,7 @@ void
 validate_n(int& n) {
   // Prompt for value if not passed in CLI
   if (n == -1) {
-    cout << "Monomer count (integer value greater than 0)\n: ";
+    cout << "\nMonomer count (integer value greater than 0)\n: ";
     cin >> n; // TODO: bad input
   }
   for (;;) {
@@ -133,7 +133,7 @@ void
 validate_k(double& k) {
   // Prompt for value if not passed in CLI
   if (k == -1.0) {
-    cout << "Overlap Factor (decimal value within [0.5, 1.0] )\n: ";
+    cout << "\nOverlap Factor (decimal value within [0.5, 1.0] )\n: ";
     cin >> k; // TODO: bad input
   }
   for (;;) {
@@ -152,7 +152,7 @@ int
 main(int argc, char **argv) {
   srand((unsigned int)time(NULL));
 
-	Fractal base;
+	Fractal* base = nullptr;
   double df = -1; // Fractal Dimension
   double kf = -1; // Prefactor
   int n = -1; // Monomer Count
@@ -192,6 +192,8 @@ main(int argc, char **argv) {
     switch (key)
     {
       case escape: // Quit
+        if (base != nullptr)
+          delete base;
         Log::info("Program terminated successfully.\n");
         return 0;
       case key_0: // New fractal
@@ -202,19 +204,19 @@ main(int argc, char **argv) {
         validate_n(n);
         validate_k(k);
         // Generate fractal
-        base = Fractal(df, kf, k);
-        base.generate_fractal(n);
+        base = new Fractal(df, kf, k);
+        base->generate_fractal(n);
         // Reset parameters for next iteration
         df = kf = k = -1.0;
         n = -1;
         break;
       case key_1: // Structure Factor
         Log::info("Computing the fractal's stucture factor..");
-        struct_factor(base);
+        struct_factor(*base);
         break;
       case key_2: // Micrograph analysis
         Log::info("Computing a 2D micrograph analysis on the fractal..");
-        micro_analysis(base);
+        micro_analysis(*base);
         break;
       case key_3: // Help
         Params::print_usage();
