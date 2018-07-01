@@ -7,40 +7,29 @@ Cross-platform software for simulating carbon pseudo-fractal agglomerates and an
 ### Prerequisites
 
 _GUI is a work-in-progress_
-<del>
-#### FracMAP GUI
 
-Download, build, and compile wxWidgets. The latest release can be found at:
+> #### FracMAP GUI
+> Download, build, and compile wxWidgets. The latest release can be found at:
+> https://github.com/wxWidgets/wxWidgets/releases
 
-https://github.com/wxWidgets/wxWidgets/releases
+> Please install wxWidgets in the root folder:
 
+>     Windows: C:/wxWidgets
 
-Please install wxWidgets in the root folder:
+>     Linux: /wxWidgets
 
-    Windows: C:/wxWidgets
-
-    Linux: /wxWidgets
-
-If installing elsewhere, redirect the project dependencies to the chosen location.
-</del>
+> If installing elsewhere, redirect the project dependencies to the chosen location.
 
 ### Installing
 
-_Currently, only the Linux Makefile has been updated_
-<del>
-#### Windows Install
+_Currently, only the Linux Makefile has been updated to the changes in this fork_
 
-" Microsoft Visual Studio (MSV) 2005 workspace and project files have been included in
-the source code distribution.
-
-**To build executable:**
-
-1) Open the Microsoft Visual Studio Solution file `Unix_Fractal.sln` from within MSV.
-
-2) Select Build -> Build Unix\_Fractal\_final.
-
-You will find `Unix_Fractal.exe` to the `./debug` directory.
-</del>
+> #### Windows Install
+> Microsoft Visual Studio (MSV) 2005 workspace and project files have been included in the source code distribution.
+> **To build executable:**
+> 1) Open the Microsoft Visual Studio Solution file `Unix_Fractal.sln` from within MSV.
+> 2) Select Build -> Build Unix\_Fractal\_final.
+> You will find `Unix_Fractal.exe` to the `./debug` directory.
 
 #### Linux Install
 
@@ -206,7 +195,7 @@ The user is prompted for the filname of the output file that the program will wr
 
 ##### Option 3
 
-The user is prompted for the filname of the output file that the program will write the results of a comprehensive analysis of 25 projected, pixelated, @-D images of the unique stabe orientations of the given 3-D fractal.
+The user is prompted for the filname of the output file that the program will write the results of a comprehensive analysis of 25 projected, pixelated, 2-D images of the unique stabe orientations of the given 3-D fractal.
 
 For each trial, the following parameters are outputted.
 
