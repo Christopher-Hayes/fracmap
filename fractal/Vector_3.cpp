@@ -13,18 +13,20 @@ double tri_area(Vector_3 pt1, Vector_3 pt2, Vector_3 pt3) {
 	
   return 0.5 * a.X(b).magnitude();
 }
-void random_quat(double Quat[]) {
+void Vector_3::
+random_quat(double Quat[]) {
   double u1 = (double)rand() / RAND_MAX;
   double u2 = (double)rand() / RAND_MAX;
   double u3 = (double)rand() / RAND_MAX;
 	
-  Quat[0] = sqrt( 1 - u1 ) * sin( 2 * pi * u2);
-  Quat[1] = sqrt( 1 - u1 ) * cos( 2 * pi * u2);
-  Quat[2] = sqrt( u1 ) * sin( 2 * pi * u3);
-  Quat[3] = sqrt( u1 ) * cos( 2 * pi * u3);
+  Quat[0] = sqrt(1-u1) * sin(2*pi*u2);
+  Quat[1] = sqrt(1-u1) * cos(2*pi*u2);
+  Quat[2] = sqrt(u1) * sin(2*pi*u3);
+  Quat[3] = sqrt(u1) * cos(2*pi*u3);
 }
 
-Vector_3 random_vec( ) {
+Vector_3 Vector_3::
+random_vec() {
   double u1 = (double)rand() / RAND_MAX;
   double u2 = (double)rand() / RAND_MAX;
   return Vector_3(sqrt(4*u2 - 4*u2*u2) * sin(2*pi*u1),
@@ -42,13 +44,13 @@ void QuatToMatrix( const double Quat[], double Matrix[] ) {
   Matrix[1] = 2*i*i - 2*w*k;
   Matrix[2] = 2*w*j + 2*i*k;
 	
-  Matrix[0 + 3] = 2*w*k + 2*i*j;
-  Matrix[1 + 3] = w*w - i*i + j*j - k*k;
-  Matrix[2 + 3] = 2*j*k - 2*w*i;
+  Matrix[0+3] = 2*w*k + 2*i*j;
+  Matrix[1+3] = w*w - i*i + j*j - k*k;
+  Matrix[2+3] = 2*j*k - 2*w*i;
 	
-  Matrix[0 + 6] = 2*i*k - 2*w*i;
-  Matrix[1 + 6] = 2*w*i + 2*i*k;
-  Matrix[2 + 6] = w*w - i*i - j*j + k*k;
+  Matrix[0+6] = 2*i*k - 2*w*i;
+  Matrix[1+6] = 2*w*i + 2*i*k;
+  Matrix[2+6] = w*w - i*i - j*j + k*k;
 }
 // TODO: fix this mess
 void VectorToMatrix( const Vector_3 newZ, double RotMatrix[] )

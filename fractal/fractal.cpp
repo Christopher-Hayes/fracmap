@@ -19,7 +19,7 @@ Fractal(double df, double kf, double k)
   _rg(0),
   _n(0)
 {
-  // Validate parameters TODO: more helpful output
+  // Validate parameters
   if (df < 1.0 || df > 3.0)
     Log::fatal("Invalid fractal dimension. Range: [1.0, 3.0]");
   if (kf < 1.0)
@@ -33,6 +33,8 @@ Fractal(double df, double kf, double k)
 // Generate fractal ------------------------------------------------------------
 void Fractal::
 generate_fractal(int target_size) {
+  if (target_size < 1)
+    Log::fatal("Cannot generate fractal with a size less than 1.");
   Log::info("Generating fractal..");
   while ((int)size() < target_size) {
     create_monomer();
@@ -61,7 +63,7 @@ add_monomer(double x, double y, double z) {
 }
 // Append monomer; update r and r^2 sums ---------------------------------------
 void Fractal::
-add_monomer(Vector_3 new_monomer) {
+add_monomer(const Vector_3& new_monomer) {
   _fractal.push_back(new_monomer);
   Log::info("Adding monomer at point " + new_monomer.print());
   
@@ -70,90 +72,81 @@ add_monomer(Vector_3 new_monomer) {
 
   parameter_update();
 }
+// Create monomer, randomly attach to factal such that it does not overlap
+// beyond the accepted parameters ----------------------------------------------
+Vector_3 Fractal::
+add_random_monomer() {
+  Vector_3 new_monomer;
+  double threshold = 2 * _a * _k;
+
+  // Repeat until monomer is above threshold distance from nearest monomer
+  do {
+    // Scale random unit vector to 2x radius, translate to random monomer
+    // TODO: should get_random_monomer() be run every single time?
+    new_monomer = Vector_3::random_vec() * threshold + get_random_monomer();
+  } while (monomer_proximity(new_monomer, threshold));
+
+  return new_monomer;
+}
 // MonteCarlo add monomer ------------------------------------------------------
-void Fractal::monte_carlo() {
+void Fractal::
+monte_carlo() {
 	Vector_3 temp_monomer;
+  // WARNING: "out of range" is highly dependent on mean_radius
+  // TODO: change to invalid value
   Vector_3 best_monomer(1000.0f, 1000.0f, 1000.0f); // Initialized out of range
 
-	double expected_rg = pow(((_n + 1) / _kf), 1 / _df) * _a;
 	double temp_rg;
+	double expected_rg = pow(((_n + 1) / _kf), 1 / _df) * _a;
   double best_rg = expected_rg * 1000; // Initialized out of range	
+  double best_diff = abs(best_rg - expected_rg);
 
 	for (int attempt = 0; attempt < max_monomer_tries; attempt++) {
 	  temp_monomer = add_random_monomer();
 	  temp_rg = test_rg(temp_monomer);
     // Check if monomer is within expected parameters
-		if (abs(temp_rg - expected_rg) < abs(best_rg - expected_rg)) {
+		if (abs(temp_rg - expected_rg) < best_diff) {
 		  best_rg = temp_rg;
 		  best_monomer = temp_monomer;
+      best_diff = abs(best_rg - expected_rg);
 		}
 	}
   add_monomer(best_monomer);
 }
 // Find how a monomer would affect radius of gyration --------------------------
-double Fractal::test_rg(Vector_3 monomer) {
-  Vector_3 temp_r_mean = (_r_sum + monomer) / (_n + 1);
-  double temp_r_squared = _r_squared + monomer * monomer;
+double Fractal::
+test_rg(const Vector_3& test_monomer) {
+  Vector_3 temp_r_mean = (_r_sum + test_monomer) / (_n + 1);
+  double temp_r_squared = _r_squared + test_monomer * test_monomer;
   
   return sqrt(temp_r_squared / (_n + 1) - (temp_r_mean * temp_r_mean));
 }
 // Update _rg from sum of radii and r_mean -------------------------------------
+// TBD: keep this? - increased efficiency vs opaque parameters + prone to bugs
 void Fractal::
 parameter_update() {
   _n = (int)_fractal.size();
   _r_mean = _r_sum / _n;
   _rg = sqrt(_r_squared / _n - (_r_mean * _r_mean)); // Standard deviation
-  Log::info("Fractal parameters updated.");
+  Log::info("Fractal parameters updated."); //May remove depending on speed cost
 }
 // Obtain a random monomer from the agglomerate --------------------------------
 Vector_3 Fractal::
 get_random_monomer() {
 	return _fractal[rand() % _fractal.size()];
 }
-// Create monomer, randomly attach to factal such that it does not overlap
-// beyond the accepted parameters ----------------------------------------------
-Vector_3 Fractal::
-add_random_monomer() {
-  Vector_3 new_monomer;
-  while (check_overlap(new_monomer)) {
-    new_monomer = random_vec();
-    new_monomer *= 2 * _a * _k; // Scale unit vector to twice monomer radius
-    new_monomer += get_random_monomer(); // Translate monomer to new center
-  }
-  return new_monomer;
-}
-// Remove last monomer; update r and r^2 sums ----------------------------------
-void Fractal::
-remove_last() {
-  Vector_3 last_monomer = _fractal.back();
-  _fractal.pop_back();
-  
-  _r_sum -= last_monomer;
-  _r_squared -= last_monomer * last_monomer;
-  
-  parameter_update();
-}
-/* Returns true if monomers are point contact (do not overlap) */
-/* Changes by SC on 1/9/09 to check if a PARTICULAR monomer overlaps */
+// Returns true if new monomer within threshold distance of another ------------
 bool Fractal::
-check_overlap(const Vector_3& monomer) {
-  // TODO:  This should be updated to use an octtree for collision detection.
-	for(vector<Vector_3>::iterator iter = _fractal.begin(); iter != _fractal.end(); iter++)
-	{
-		if(//iter != monomer && //TODO: Fix this!
-		    //Until this is fixed, assuming it's checking for overlap on UNADDED monomer
- 		   monomer.distance(*iter) < (2 * _a * _k - 0.01)) //This is rudimentary
-		{
-			return true; //There was an overlap
-		}
+monomer_proximity(const Vector_3& new_monomer, double threshold) {
+  for (const auto& monomer : _fractal) {
+		if (new_monomer.distance(monomer) < threshold)
+			return true; // Overlap found
 	}
-
 	return false;
 }
 // Clear fractal ---------------------------------------------------------------
 void Fractal::clear() {
 	_fractal.clear();
-	points.clear();
 	parameter_update();
   Log::info("Fractal cleared.");
 }

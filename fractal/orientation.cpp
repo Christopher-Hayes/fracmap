@@ -32,7 +32,7 @@ void Fractal::orient_random(ofstream & output, unsigned int num_trials, bool sta
     {
       try
 	  {			
-	  seed = newOrientation = random_vec();
+	  seed = newOrientation = Vector_3::random_vec();
 	  if( !stablize || find_stable_vector( seed, newOrientation ) ) //Second function is not called if stablize is false, thus we need to set newOrientation Correctly first.
 	    {
 	      rotate_newZ(newOrientation);

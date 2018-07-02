@@ -22,6 +22,7 @@ public:
 	Vector_3 normalize() const;
   std::string print() const;
   // Operator overloads
+  // TODO: consider making these inline
 	Vector_3 operator-(const Vector_3& rhs) const;
 	Vector_3 operator+(const Vector_3& rhs) const;
 	Vector_3 operator/(const double& den) const;
@@ -38,17 +39,17 @@ public:
 	Vector_3& operator=(const Vector_3& o);
 	bool operator==(const Vector_3& b) const;
 
+  // Static utility functions
+  static void random_quat(double Quat[]);
+  static Vector_3 random_vec();
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Vector_3& v) {
   return out << v.x << " " << v.y << " " << v.z << std::endl;
 }
 
-// ?
-void random_quat( double Quat[] ); //Size = 4
 void QuatToMatrix( const double Quat[], double Matrix[] );  // 4 and 9 respectively
 void VectorToMatrix( const Vector_3 newZ, double RotMatrix[] );
-Vector_3 random_vec(); //3
 
 // ?
 template<class T1, class T2, class T3>

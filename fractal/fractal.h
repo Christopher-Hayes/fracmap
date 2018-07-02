@@ -28,21 +28,20 @@ public:
 	void monte_carlo();
   // Create/Add monomer
 	void add_monomer(double x, double y, double z);
-	void add_monomer(Vector_3 new_monomer);
+	void add_monomer(const Vector_3& new_monomer);
 	Vector_3 add_random_monomer();
 	void create_monomer();
 
 	void clear();
 	
-	bool check_overlap(const Vector_3& monomer);
+	bool monomer_proximity(const Vector_3& new_monomer, double threshold);
 
   // Update
 	void parameter_update();
   
-	double test_rg(Vector_3 monomer);
+	double test_rg(const Vector_3& monomer);
   
 	Vector_3 get_random_monomer();
-	void remove_last();
 	Vector_3 return_last();		
 
   // Getters
@@ -71,8 +70,8 @@ public:
 	void create_box();
 	void structurec(std::ofstream& output);
 	
-	void orient_random(std::ofstream& output, unsigned int num_trials = 25, bool stablize = true);
-	void rotate_newZ( Vector_3 newZ );
+	void orient_random(std::ofstream& output, unsigned int num_trials=25, bool stablize=true);
+	void rotate_newZ(Vector_3 newZ);
   
 	// Convex hull codes
 	Vector_3& max_point(Vector_3 direction);
@@ -112,14 +111,17 @@ private:
 	double box_length;
 	int num_parts;
 
+  // Orientation
+  std::vector<Vector_3> _facets;
+
+  // 3D Structure
+  std::vector<Vector_3> _points;
+
   // Put these in private..
 
 	static bool last_trial; // ?
 
-	std::vector<Vector_3> points; // What is this for when there's _fractal?
 	bool box_created;
-
-	std::vector<Vector_3> _facets; // Temporary debug for surface detection
 };
 
 // ?

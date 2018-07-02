@@ -1,18 +1,16 @@
-/*
- * 3dstructure.cpp
- * --------
- * By Mark Garro
- * Date: September 06, 2007
+/* 3dstrcture.cpp
+ * Modified: (09/06/07) Mark Garro
+ * Modified: (07/01/18) Chris Hayes
  */
-
 #include <iostream>
 #include <vector>
 #include <math.h>
 #include <fstream>
-using namespace std;
 
 #include "fractal.h"
 #include "settings.h"
+
+using namespace std;
 
 const int STRUCTURE_ITER = 500;
 const int ANG_ITER = 100; // Was 2000
@@ -30,7 +28,7 @@ void Fractal::structurec(ofstream & output)
 	output << "Qcount, Qval, Angsum\n";
 
 	create_box();
-	cout << points.size() << endl;
+	cout << _points.size() << endl;
 
 	cout << "Vector_3 coordinates stored." << endl;
 
@@ -45,7 +43,7 @@ void Fractal::structurec(ofstream & output)
 
 		for(int j = 0; j < ANG_ITER; ++j)
 		{	
-		    qvec = random_vec();
+		    qvec = Vector_3::random_vec();
 			qvec *= qval;
 		  
 		    Resum = 0.0;
@@ -53,17 +51,17 @@ void Fractal::structurec(ofstream & output)
 
 			for(int k = 0; k < STRUCTURE_PRECISION; k++)
 			{
-				int rand_pt = rand() % (int)points.size();
+				int rand_pt = rand() % (int)_points.size();
 
-			    dotprod = points[rand_pt] * qvec;
+			    dotprod = _points[rand_pt] * qvec;
 			  
 				Resum += cos(dotprod);
 				Imsum += sin(dotprod);
 			}
-			Resum *= (double) points.size() / STRUCTURE_PRECISION;
-			Imsum *= (double) points.size() / STRUCTURE_PRECISION;
+			Resum *= (double) _points.size() / STRUCTURE_PRECISION;
+			Imsum *= (double) _points.size() / STRUCTURE_PRECISION;
 
-			Sqtotsum = ((Resum*Resum + Imsum*Imsum) / points.size()*points.size());
+			Sqtotsum = ((Resum*Resum + Imsum*Imsum) / _points.size()*_points.size());
 			Angsum  += Sqtotsum / ANG_ITER;
 		}
 
@@ -108,7 +106,7 @@ void Fractal::create_box()
 						temp += *iter;
 						if(temp.distance(*iter) < _a)
 						{	
-							points.push_back(temp);
+							_points.push_back(temp);
 						}
 					}
 				}

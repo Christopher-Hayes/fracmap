@@ -9,7 +9,7 @@
 #include <time.h>
 #include "Vector_3.h"
 
-const std::string version = "07.01.18";
+const std::string version = "07.02.18";
 
 // Program Parameters (defaults)
 const double fractal_dimension = 1.82;

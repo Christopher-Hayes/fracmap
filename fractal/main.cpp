@@ -233,10 +233,10 @@ main(int argc, char **argv) {
     }
     // Print main menu; get user input
     print_menu();
-    getline(cin, s);
-    key = s[0]; 
-    Log::info("User input: " + s);
-    Log::info("Extracted input: " + string(1, key));
+    cin >> key;
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    Log::info("User input: " + string(1, key));
 	}
 	return 0;
 }
