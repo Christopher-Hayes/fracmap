@@ -157,3 +157,17 @@ void Fractal::clear() {
 	parameter_update();
   Log::info("Fractal cleared.");
 }
+
+// Print functions =============================================================
+// Print monomer XYZ centers ---------------------------------------------------
+void Fractal::
+print_monomers(ostream& out) const {
+  out << "Df: " << _df
+      << "\nkf: " << _kf
+      << "\nn: " << _n
+      << "\nk: " << _k
+      << "\n\nRg: " << _rg
+      << "\n\nX Y Z" << endl;
+  for (Vector_3 v : _fractal)
+    out << v << endl;
+}

@@ -35,9 +35,14 @@ public:
 	Vector_3& operator/=(const double& div);
 	Vector_3& operator*=(const double& mult);
 	
-	Vector_3 & operator=(const Vector_3& o);
+	Vector_3& operator=(const Vector_3& o);
 	bool operator==(const Vector_3& b) const;
+
 };
+
+inline std::ostream& operator<<(std::ostream& out, const Vector_3& v) {
+  return out << v.x << " " << v.y << " " << v.z << std::endl;
+}
 
 // ?
 void random_quat( double Quat[] ); //Size = 4

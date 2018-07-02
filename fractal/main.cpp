@@ -2,9 +2,11 @@
  * Created:  Mark Garro  (09/06/07)
  * Modified: Chris Hayes (06/26/18)
  */
+#include <iomanip>
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <limits>
 #include <cstring>
 #include <string>
 #include <sstream>
@@ -20,18 +22,20 @@
 
 using namespace std;
 
-enum {escape, key_0, key_1, key_2, key_3};
-
 // Print function menu ---------------------------------------------------------
 void 
 print_menu() {
-	cout << "\nChoose an option to continue."
-	     << "\nFractal menu:"
-	     << "\n\t" << escape << ": Exit"
-	     << "\n\t" << key_0 << ": Clear current fractal and create a new fractal"
-	     << "\n\t" << key_1 << ": Calculate Structure Factor of Current Fractal"
-	     << "\n\t" << key_2 << ": 2D Micrograph Analysis"
-	     << "\n\t" << key_3 << ": Help" << endl;
+	cout << "\n  + - - - - - - - FracMAP  menu - - - - - - - +"
+       << "\n  |     " << left << setw(38) << "" << "|"
+       << "\n  | 0 | " << setw(38) << "Create new fractal (Clear prexisting)" << "|"
+       << "\n  |     " << setw(38) << "" << "|"
+       << "\n  | 1 | " << setw(38) << "Calculate structure factor of fractal" << "|"
+       << "\n  |     " << setw(38) << "" << "|"
+       << "\n  | 2 | " << setw(38) << "Run 2D Micrograph analysis on fractal" << "|"
+       << "\n  |     " << setw(38) << "" << "|"
+       << "\n  | 3 | " << setw(38) << "Quit" << "|"
+	     << "\n  + - - - - - - - - - - - - - - - - - - - - - +"
+       << "\n\n  Choose one.\n  Input the integer and press enter: ";
 }
 // Open output file ------------------------------------------------------------
 void open_output(ofstream& output) {
@@ -152,11 +156,14 @@ int
 main(int argc, char **argv) {
   srand((unsigned int)time(NULL));
 
+  ofstream out("out.txt");
+
 	Fractal* base = nullptr;
   double df = -1; // Fractal Dimension
   double kf = -1; // Prefactor
   int n = -1; // Monomer Count
   double k = -1; // Overlap Factor
+  string s; // for input
   Params p = Params(argc, argv);
   // Quit out if usage/help parameter is active.
   if (p.check_usage())
@@ -188,15 +195,10 @@ main(int argc, char **argv) {
   }
 	
   // Program loop; on first run automatically run new fractal
-	for (int key = key_0;;) {
+	for (char key = '0';;) {
     switch (key)
     {
-      case escape: // Quit
-        if (base != nullptr)
-          delete base;
-        Log::info("Program terminated successfully.\n");
-        return 0;
-      case key_0: // New fractal
+      case '0': // New fractal
         Log::info("Creating new fractal..");
         // Validate / get params
         validate_df(df);
@@ -206,28 +208,35 @@ main(int argc, char **argv) {
         // Generate fractal
         base = new Fractal(df, kf, k);
         base->generate_fractal(n);
+        base->print_monomers(out);
+        out.close();
         // Reset parameters for next iteration
         df = kf = k = -1.0;
         n = -1;
         break;
-      case key_1: // Structure Factor
+      case '1': // Structure Factor
         Log::info("Computing the fractal's stucture factor..");
         struct_factor(*base);
         break;
-      case key_2: // Micrograph analysis
+      case '2': // Micrograph analysis
         Log::info("Computing a 2D micrograph analysis on the fractal..");
         micro_analysis(*base);
         break;
-      case key_3: // Help
-        Params::print_usage();
-        break;
+      case '3': // Quit
+        if (base != nullptr)
+          delete base;
+        cout << "Program terminated successfully.\n" << endl;
+        return 0;
       default: // Catch all invalid input
         Log::warn("Invalid menu option.\n");
         break;					
     }
     // Print main menu; get user input
     print_menu();
-    cin >> key;
+    getline(cin, s);
+    key = s[0]; 
+    Log::info("User input: " + s);
+    Log::info("Extracted input: " + string(1, key));
 	}
 	return 0;
 }

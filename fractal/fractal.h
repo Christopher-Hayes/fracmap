@@ -85,6 +85,10 @@ public:
 	Vector_3 last_facet_normal(std::vector<Vector_3> facets);
 	bool cm_proj_in_facet(std::vector<Vector_3>& facets);
 	bool check_last_facet(std::vector<Vector_3>& _facets);
+
+  // Print functions
+  void print_monomers(std::ostream& out = std::cout) const;
+  // void print_parameters(ostream& out = cout) const;
 	
 private:
   // A vector containing the centers of the monomers.
