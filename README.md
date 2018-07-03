@@ -105,7 +105,7 @@ Run `./fracmap -h` to print the usage comment shown below.
 
 ```
 
-	fracMAP v07.01.18
+	fracMAP v07.03.18
 
 Usage:
 
@@ -130,16 +130,35 @@ Inline Command Arguments (program will prompt in absence)
   -k <overlap factor> --overlap <overlap factor>
   Expects decimal value with the range of [0.5, 1.0]
 
+ Epsilon
+  -e <epsilon> --epsilon <epsilon>
+  Expects decimal value with the range of (0.0, inf)
+
+ Defaults
+  -f --defaults
+  Automatically use parameter defaults if not explicitly set in CLI argument.
+
+
+BATCH: 
+
+ Runs
+  -r <number runs> --runs <number runs>
+ Run FracMAP a number of times with the same parameters. Expects integer greater than 0.
+
 
 OUTPUT:
-
- File Output
-  -o <destination> --output <destination>
-  Log output to file
 
  Verbose
   -b --verbose
   Verbose output
+
+ Monomer XYZ Output
+  -o <destination> --vec_output <destination>
+  Log monomer XYZ centers to file.
+
+ Run result filename
+  -t <destination> --run_dir <destination>
+  Choose filename to output run result. Program puts file in ./run_output Defaults to run.txt
 
 
 MISC:
