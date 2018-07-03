@@ -219,68 +219,103 @@ main(int argc, char **argv) {
     df = p.get_df();
     validate_df(df, true);
     _log.info("CLI argument df=" + to_string(df));
+  }else if (p.check_def()) {
+    df = fractal_dimension;
+    _log.info("Using default value for fractal dimension. df=" + to_string(df));
   }
   // Prefactor
   if (p.check_kf()) {
     kf = p.get_kf();
     validate_kf(kf, true);
     _log.info("CLI argument kf=" + to_string(kf));
+  }else if (p.check_def()) {
+    kf = prefactor;
+    _log.info("Using default value for prefactor. kf=" + to_string(kf));
   }
   // Monomer Count
   if (p.check_n()) {
     n = p.get_n();
     validate_n(n, true);
     _log.info("CLI argument n=" + to_string(n));
+  }else if (p.check_def()) {
+    n = monomer_count;
+    _log.info("Using default value for monomer count. n=" + to_string(n));
   }
   // Overlap Factor
   if (p.check_k()) {
     k = p.get_k();
     validate_k(k, true);
     _log.info("CLI argument k=" + to_string(k));
+  }else if (p.check_def()) {
+    k = overlap;
+    _log.info("Using default value for overlap. k=" + to_string(k));
   }
   // Epsilon
   if (p.check_e()) {
     e = p.get_e();
     validate_e(e, true);
     _log.info("CLI argument e=" + to_string(e));
+  }else if (p.check_def()) {
+    e = epsilon;
+    _log.info("Using default value for epsilon. e=" + to_string(e));
   }
 
   // Runs
   if (p.check_r()) {
     _log.info("Running batch..");
     // Validation
-    validate_df(df);
-    validate_kf(kf);
-    validate_n(n);
-    validate_k(k);
-    validate_e(e);
+    if (!p.check_df() && !p.check_def())
+      validate_df(df);
+    if (!p.check_kf() && !p.check_def())
+      validate_kf(kf);
+    if (!p.check_n() && !p.check_def())
+      validate_n(n);
+    if (!p.check_k() && !p.check_def())
+      validate_k(k);
+    if (!p.check_e() && !p.check_def())
+      validate_e(e);
     // # runs
     int total_runs = p.get_r();
     if (total_runs < 1)
       _log.fatal("Invalid number of runs. Must be greater than 0.");
     // TODO: ofstream safety
-    // Put params in file
-    ofstream params_output("./run_output/run_params.txt", ios::trunc); //Discard old contents
-    params_output << "Df: " << df
-                  << "\nkf: " << kf
-                  << "\nn: " << n
-                  << "\nk: " << k
-                  << "\ne: " << e << endl;
     // Output file
     ofstream run_output;
     if (p.check_run_output())
-      run_output.open(string(p.get_run_output()) + "/run.txt");
+      run_output.open(string("run_output/") + p.get_run_output());
     else
-      run_output.open(run_output_dir + "/run.txt");
-    run_output << "Run\tRg\tActual_Epsilon" << endl;
+      run_output.open(string("run_output/") + run_output_filename);
+    run_output << "Df\tkf\tn\tk\te\n"
+               << df << "\t" << kf << "\t" << n << "\t"
+               << k << "\t" << e << "\n\n"
+               << "Run\tRg\tActual_Epsilon" << endl;
     // Runs
-    for (int run=0; run<total_runs; run++) {
-      cout << "\n\nRun " << run << endl;
+    double sum_rg = 0;
+    double sum_e = 0;
+    chrono::steady_clock::time_point start = chrono::steady_clock::now();
+    for (int run=1; run<total_runs+1; run++) {
+      // Progress bar
+      if (run % 10 == 0 || run == total_runs) {
+        int prog = floor(double(run) / (double)total_runs * 49);
+        cout << log_green << "Run " << run << "\t<"
+             << setfill('#') << setw(prog) << ""
+             << log_red << setfill('_') << setw(49 - prog) << ""
+             << log_green << ">  " << (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - start).count()) << " ms" << endl;
+      }
+      // Build fractal
       base = new Fractal(df, kf, k, e);
-      base->generate_fractal(n);
+      base->generate_fractal(n, false);
+      // Print fractal output
       run_output << run << "\t" << base->rg() << "\t" << base->actual_e() << endl;
+      sum_rg += base->rg();
+      sum_e += base->actual_e();
     }
+    // Averages
+    run_output << "-----------------\nAverage Rg: " << (sum_rg / total_runs)
+               << "\nAverage Actual Epsilon: " << (sum_e / total_runs) << endl;
     run_output.close();
+    cout << log_reset << "Batch run completed successfully in "
+         << (chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - start).count()) << " ms" << endl;
   }else {
     // Program loop; on first run automatically run new fractal
     for (char key = '0';;) {

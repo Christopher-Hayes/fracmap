@@ -28,7 +28,7 @@ public:
 	~Fractal() {}
 
   // Core operations ===========================================================
-  void generate_fractal(int size);
+  void generate_fractal(int size, bool output=true);
 	void monte_carlo();
   // Create/Add monomer
 	void create_monomer();

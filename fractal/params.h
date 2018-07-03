@@ -30,6 +30,7 @@ public:
   inline bool check_vec_output() const { return _vec_output; }
   inline bool check_run_output() const { return _run_output; }
   inline bool check_verbose() const { return _verbose; }
+  inline bool check_def() const { return _r; }
   inline bool check_usage() const { return _usage; }
   // Get param value
   inline double get_df() const { return _df_v; }
@@ -47,16 +48,17 @@ private:
   const char* _run_output_file = ""; // const for c++11+ compat.
   double _df_v, _kf_v, _k_v, _e_v;
   int _n_v, _r_v;
-  bool _verbose, _vec_output, _run_output, _df, _kf, _n, _k, _e, _r, _usage;
+  bool _verbose, _vec_output, _run_output, _df, _kf, _n, _k, _e, _r, _def, _usage;
 
   // Long CLI options
-  struct option LONG_OPTS[13] = {
+  struct option LONG_OPTS[14] = {
     { "verbose",            no_argument,        NULL,  'b' },
     { "fractal_dimension",  required_argument,  NULL,  'd' },
     { "prefactor",          required_argument,  NULL,  'p' },
     { "monomers",           required_argument,  NULL,  'n' },
     { "overlap",            required_argument,  NULL,  'k' },
     { "epsilon",            required_argument,  NULL,  'e' },
+    { "defaults",           required_argument,  NULL,  'f' },
     { "vec_output",         required_argument,  NULL,  'o' },
     { "runs",               required_argument,  NULL,  'r' },
     { "run_output",         required_argument,  NULL,  't' },

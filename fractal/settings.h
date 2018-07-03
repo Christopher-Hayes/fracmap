@@ -36,7 +36,7 @@ const int parts_per_radius = 10;
 const double filter_depth = mean_radius;
 
 // Output
-const std::string run_output_dir = "run_output";
+const std::string run_output_filename = "run.txt";
 
 // Logging
 static Log& _log = Log::get_instance();

@@ -12,10 +12,10 @@ Params::Params(int argc, char* argv[])
   // init
   _df_v = _kf_v = _k_v = _e_v = 0.0;
   _n_v = 0;
-  _verbose = _vec_output = _run_output = _usage = _df = _kf = _n = _k = _e = false;
+  _verbose = _vec_output = _run_output = _usage = _def = _df = _kf = _n = _k = _e = false;
   // process switches
   int code, opt;
-  while ((opt = getopt_long(argc, argv, "vbhd:p:n:k:e:r:o:t:", LONG_OPTS, &code)) != -1){
+  while ((opt = getopt_long(argc, argv, "vbhfd:p:n:k:e:r:o:t:", LONG_OPTS, &code)) != -1){
     switch (opt) {
       case 'd': // Fractal Dimension
         _df = true;
@@ -36,6 +36,9 @@ Params::Params(int argc, char* argv[])
       case 'e': // Epsilon
         _e = true;
         _e_v = extract_double("Epsilon");
+        break;
+      case 'f': // Defaults
+        _def = true;
         break;
       case 'r': // Runs
         _r = true;
@@ -128,6 +131,11 @@ Params::print_usage(int err)
        << "\n  " << log_cyan << "-e <epsilon>"
        << log_magenta <<  " --epsilon <epsilon>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of (0.0, inf)"
+       // Defaults
+       << "\n\n Defaults"
+       << "\n  " << log_cyan << "-f"
+       << log_magenta <<  " --defaults" << log_reset
+       << "\n  Automatically use parameter defaults if not explicitly set in CLI argument."
        << "\n\n\nBATCH: "
        // Number of runs
        << "\n\n Runs"
@@ -146,10 +154,10 @@ Params::print_usage(int err)
        << log_magenta << " --vec_output <destination>" << log_reset
        << "\n  Log monomer XYZ centers to file."
        // Run output
-       << "\n\n Run result output directory"
-       << "\n  " << log_cyan << "-t <destination directory>"
-       << log_magenta << " --run_dir <destination directory>" << log_reset
-       << "\n  Choose directory name to place batch run output. Defaults to ./run_output"
+       << "\n\n Run result filename"
+       << "\n  " << log_cyan << "-t <destination>"
+       << log_magenta << " --run_dir <destination>" << log_reset
+       << "\n  Choose filename to output run result. Program puts file in ./run_output Defaults to run.txt"
        << "\n\n\nMISC:"
        // Help / Usage
        << "\n\n Help"

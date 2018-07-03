@@ -34,28 +34,31 @@ Fractal(double df, double kf, double k, double e)
 // Fractal Generation ==========================================================
 // Generate fractal ------------------------------------------------------------
 void Fractal::
-generate_fractal(int target_size) {
+generate_fractal(int target_size, bool output) {
   if (target_size < 1)
     _log.fatal("Cannot generate fractal with a size less than 1.");
   _log.info("Generating fractal..");
   std::chrono::steady_clock::time_point start = chrono::steady_clock::now();
   while ((int)size() < target_size) {
     create_monomer();
-    cout << "Fractal size: " << (int)size() << " of " << target_size << endl;
+    if (output)
+      cout << "Fractal size: " << (int)size() << " of " << target_size << endl;
   }
-  chrono::steady_clock::time_point end = chrono::steady_clock::now();
-  cout << log_magenta << "\nFractal successfully generated." << endl;
-  double ms = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000.0;
-  // Print info
-  cout << "\n" << setw(22) << right << "Time (ms): " << fixed << setprecision(8) << ms
-       << "\n" << setw(22) << "Df: " << _df
-       << "\n" << setw(22) << "kf: " << _kf
-       << "\n" << setw(22) << "k: " << _k
-       << "\n" << setw(22) << "n: "<< _n
-       << "\n" << setw(22) << "Rg: " << _rg
-       << "\n" << setw(22) << "Epsilon: " << epsilon
-       << "\n" << setw(22) << "Avg Actual Epsilon: "
-       << (_sum_epsilon / _n) << log_reset << endl;
+  if (output) {
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+    cout << log_magenta << "\nFractal successfully generated." << endl;
+    double ms = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000.0;
+    // Print info
+    cout << "\n" << setw(22) << right << "Time (ms): " << fixed << setprecision(8) << ms
+         << "\n" << setw(22) << "Df: " << _df
+         << "\n" << setw(22) << "kf: " << _kf
+         << "\n" << setw(22) << "k: " << _k
+         << "\n" << setw(22) << "n: "<< _n
+         << "\n" << setw(22) << "Rg: " << _rg
+         << "\n" << setw(22) << "Epsilon: " << epsilon
+         << "\n" << setw(22) << "Avg Actual Epsilon: "
+         << (_sum_epsilon / _n) << log_reset << endl;
+  }
 }
 // Add new monomer -------------------------------------------------------------
 void Fractal::
