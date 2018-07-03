@@ -244,51 +244,89 @@ main(int argc, char **argv) {
     validate_e(e, true);
     _log.info("CLI argument e=" + to_string(e));
   }
-	
-  // Program loop; on first run automatically run new fractal
-	for (char key = '0';;) {
-    switch (key)
-    {
-      case '0': // Validate new params
-        // Validate / get params
-        validate_df(df);
-        validate_kf(kf);
-        validate_n(n);
-        validate_k(k);
-        validate_e(e);
-        _log.info("Creating new fractal..");
-        // Generate fractal
-        base = new Fractal(df, kf, k, e);
-        base->generate_fractal(n);
-        base->print_monomers(out);
-        out.close();
-        // Reset parameters for next iteration
-        df = kf = k = e = -1.0;
-        n = -1;
-        break;
-      case '1': // Structure Factor
-        _log.info("Computing the fractal's stucture factor..");
-        struct_factor(*base);
-        break;
-      case '2': // Micrograph analysis
-        _log.info("Computing a 2D micrograph analysis on the fractal..");
-        micro_analysis(*base);
-        break;
-      case '3': // Quit
-        if (base != nullptr)
-          delete base;
-        cout << "Program terminated successfully.\n" << endl;
-        return 0;
-      default: // Catch all invalid input
-        _log.warn("Invalid menu option.\n");
-        break;					
+
+  // Runs
+  if (p.check_r()) {
+    _log.info("Running batch..");
+    // Validation
+    validate_df(df);
+    validate_kf(kf);
+    validate_n(n);
+    validate_k(k);
+    validate_e(e);
+    // # runs
+    int total_runs = p.get_r();
+    if (total_runs < 1)
+      _log.fatal("Invalid number of runs. Must be greater than 0.");
+    // TODO: ofstream safety
+    // Put params in file
+    ofstream params_output("./run_output/run_params.txt", ios::trunc); //Discard old contents
+    params_output << "Df: " << df
+                  << "\nkf: " << kf
+                  << "\nn: " << n
+                  << "\nk: " << k
+                  << "\ne: " << e << endl;
+    // Output file
+    ofstream run_output;
+    if (p.check_run_output())
+      run_output.open(string(p.get_run_output()) + "/run.txt");
+    else
+      run_output.open(run_output_dir + "/run.txt");
+    run_output << "Run\tRg\tActual_Epsilon" << endl;
+    // Runs
+    for (int run=0; run<total_runs; run++) {
+      cout << "\n\nRun " << run << endl;
+      base = new Fractal(df, kf, k, e);
+      base->generate_fractal(n);
+      run_output << run << "\t" << base->rg() << "\t" << base->actual_e() << endl;
     }
-    // Print main menu; get user input
-    print_menu();
-    cin >> key;
-    // Ignore extraneous output
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	}
+    run_output.close();
+  }else {
+    // Program loop; on first run automatically run new fractal
+    for (char key = '0';;) {
+      switch (key)
+      {
+        case '0': // Validate new params
+          // Validate / get params
+          validate_df(df);
+          validate_kf(kf);
+          validate_n(n);
+          validate_k(k);
+          validate_e(e);
+          _log.info("Creating new fractal..");
+          // Generate fractal
+          base = new Fractal(df, kf, k, e);
+          base->generate_fractal(n);
+          // base->print_monomers(out);
+          // out.close();
+          // Reset parameters for next iteration
+          df = kf = k = e = -1.0;
+          n = -1;
+          break;
+        case '1': // Structure Factor
+          _log.info("Computing the fractal's stucture factor..");
+          struct_factor(*base);
+          break;
+        case '2': // Micrograph analysis
+          _log.info("Computing a 2D micrograph analysis on the fractal..");
+          micro_analysis(*base);
+          break;
+        case '3': // Quit
+          if (base != nullptr)
+            delete base;
+          cout << "Program terminated successfully.\n" << endl;
+          return 0;
+        default: // Catch all invalid input
+          _log.warn("Invalid menu option.\n");
+          break;					
+      }
+      // Print main menu; get user input
+      print_menu();
+      cin >> key;
+      // Ignore extraneous output
+      cin.clear();
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+  }
 	return 0;
 }

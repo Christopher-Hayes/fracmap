@@ -12,18 +12,11 @@ Params::Params(int argc, char* argv[])
   // init
   _df_v = _kf_v = _k_v = _e_v = 0.0;
   _n_v = 0;
-  _verbose = _output = _usage = _df = _kf = _n = _k = _e = false;
+  _verbose = _vec_output = _run_output = _usage = _df = _kf = _n = _k = _e = false;
   // process switches
   int code, opt;
-  while ((opt = getopt_long(argc, argv, "vbho:d:p:n:k:e:", LONG_OPTS, &code)) != -1){
+  while ((opt = getopt_long(argc, argv, "vbhd:p:n:k:e:r:o:t:", LONG_OPTS, &code)) != -1){
     switch (opt) {
-      case 'o': // Output
-        _output = true;
-        _output_file = optarg;
-        break;
-      case 'b': // Verbose
-        _verbose = true;
-        break;
       case 'd': // Fractal Dimension
         _df = true;
         _df_v = extract_double("Fractal Dimension");
@@ -43,6 +36,21 @@ Params::Params(int argc, char* argv[])
       case 'e': // Epsilon
         _e = true;
         _e_v = extract_double("Epsilon");
+        break;
+      case 'r': // Runs
+        _r = true;
+        _r_v = extract_int("Runs");
+        break;
+      case 'b': // Verbose
+        _verbose = true;
+        break;
+      case 'o': // Monomer XYZ output
+        _vec_output = true;
+        _vec_output_file = optarg;
+        break;
+      case 't': // Run result output
+        _run_output = true;
+        _run_output_file = optarg;
         break;
       case 'v': // Version
         _usage = true;
@@ -120,17 +128,28 @@ Params::print_usage(int err)
        << "\n  " << log_cyan << "-e <epsilon>"
        << log_magenta <<  " --epsilon <epsilon>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of (0.0, inf)"
+       << "\n\n\nBATCH: "
+       // Number of runs
+       << "\n\n Runs"
+       << "\n  " << log_cyan << "-r <number runs>"
+       << log_magenta << " --runs <number runs>" << log_reset
+       << "\n Run FracMAP a number of times with the same parameters. Expects integer greater than 0."
        << "\n\n\nOUTPUT:"
-       // File output
-       << "\n\n File Output"
-       << "\n  " << log_cyan << "-o <destination>"
-       << log_magenta << " --output <destination>" << log_reset
-       << "\n  Log output to file"
        // Verbose
        << "\n\n Verbose"
        << "\n  " << log_cyan << "-b"
        << log_magenta << " --verbose" << log_reset
        << "\n  Verbose output"
+       // Monomer XYZ output
+       << "\n\n Monomer XYZ Output"
+       << "\n  " << log_cyan << "-o <destination>"
+       << log_magenta << " --vec_output <destination>" << log_reset
+       << "\n  Log monomer XYZ centers to file."
+       // Run output
+       << "\n\n Run result output directory"
+       << "\n  " << log_cyan << "-t <destination directory>"
+       << log_magenta << " --run_dir <destination directory>" << log_reset
+       << "\n  Choose directory name to place batch run output. Defaults to ./run_output"
        << "\n\n\nMISC:"
        // Help / Usage
        << "\n\n Help"

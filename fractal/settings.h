@@ -35,5 +35,8 @@ const int parts_per_radius = 10;
 //const double CORRELATION_INCR = MEAN_RADIUS / PARTS_PER_RADIUS / 2;
 const double filter_depth = mean_radius;
 
+// Output
+const std::string run_output_dir = "run_output";
+
 // Logging
 static Log& _log = Log::get_instance();

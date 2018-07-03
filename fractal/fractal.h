@@ -45,10 +45,12 @@ public:
 	double N(); // Where is this function?
 	double get_df() const { return _df; }
 	double get_kf() const { return _kf; }
+  double e() const { return _e; }
 	double radius() const {	return _a; }
 	Vector_3 rmean() const { return _r_mean; }
 	Vector_3 cm() const { return _r_mean; }
 	double rg() const { return _rg; }
+  double actual_e() const { return _sum_epsilon / _n; }
 	std::vector<Vector_3>& monomers() { return _fractal;}
   
   // Vector-like operations
