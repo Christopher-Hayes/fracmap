@@ -172,7 +172,7 @@ operator-=(const Vector_3 & rhs) {
 Vector_3 Vector_3::
 operator/(const double& div) const {
   if (div == 0) {
-    Log::warn("Dividing vector by zero.");
+    _log.warn("Dividing vector by zero.");
     return *this;
   }
   return Vector_3(x / div, y / div, z / div);

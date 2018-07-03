@@ -4,8 +4,7 @@
  */
 #pragma once
 #include <string>
-
-#include "log.h"
+#include "settings.h"
 
 class Vector_3
 {

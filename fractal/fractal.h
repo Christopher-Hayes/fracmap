@@ -3,11 +3,15 @@
  * Modified: Chris Hayes (06/26/18)
  */
 #pragma once
+#include <chrono>
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <time.h>
 #include <vector>
 
@@ -20,29 +24,22 @@ class Fractal
 public:
   // Constructors / Deconstructors =============================================
 	// Fractal(Vector_3 center);
-	Fractal(double df=fractal_dimension, double kf=prefactor, double k=overlap);
+	Fractal(double df=fractal_dimension, double kf=prefactor, double k=overlap, double e=epsilon);
 	~Fractal() {}
 
   // Core operations ===========================================================
   void generate_fractal(int size);
 	void monte_carlo();
   // Create/Add monomer
+	void create_monomer();
 	void add_monomer(double x, double y, double z);
 	void add_monomer(const Vector_3& new_monomer);
-	Vector_3 add_random_monomer();
-	void create_monomer();
-
-	void clear();
-	
-	bool monomer_proximity(const Vector_3& new_monomer, double threshold);
-
-  // Update
-	void parameter_update();
-  
-	double test_rg(const Vector_3& monomer);
-  
+	Vector_3 find_attach_monomer(const Vector_3& parent_monomer);
 	Vector_3 get_random_monomer();
-	Vector_3 return_last();		
+
+	bool monomer_proximity(const Vector_3& new_monomer, double threshold);
+	double test_rg(const Vector_3& monomer);
+	void parameter_update();
 
   // Getters
 	double N(); // Where is this function?
@@ -58,6 +55,7 @@ public:
 	unsigned int size() const { return _n; }
   int begin() const { return 0; }
   int end() const { return _fractal.size(); }
+	void clear();
   Vector_3 return_last() const { return _fractal.back(); }
   Vector_3& grab(int i) {	return _fractal[i]; }
   Vector_3 operator[](int i) { return _fractal[i]; }
@@ -98,6 +96,7 @@ private:
   double _kf; // Prefactor
   double _a;  // Radius?
   double _k;  // Monomer overlap factor
+  double _e;  // Epsilon
   
   // Rg linear time calculations
 	Vector_3 _r_sum;  
@@ -107,7 +106,7 @@ private:
 	Vector_3 _r_mean;
 	double _rg;
 	int _n;
-	
+
 	double box_length;
 	int num_parts;
 
@@ -117,10 +116,12 @@ private:
   // 3D Structure
   std::vector<Vector_3> _points;
 
-  // Put these in private..
+  // Analytics
+  double _sum_epsilon;
+
+  const Vector_3 center = Vector_3(0.0, 0.0, 0.0); 
 
 	static bool last_trial; // ?
-
 	bool box_created;
 };
 

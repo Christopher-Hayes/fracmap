@@ -3,19 +3,19 @@
  */
 #include <cstdlib>
 #include <string>
-using namespace std;
 #include "params.h"
+using namespace std;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // constructor
 Params::Params(int argc, char* argv[])
 {
   // init
-  _df_v = _kf_v = _k_v = 0.0;
+  _df_v = _kf_v = _k_v = _e_v = 0.0;
   _n_v = 0;
-  _verbose = _output = _usage = _df = _kf = _n = _k = false;
+  _verbose = _output = _usage = _df = _kf = _n = _k = _e = false;
   // process switches
   int code, opt;
-  while ((opt = getopt_long(argc, argv, "vbho:d:p:n:k:", LONG_OPTS, &code)) != -1){
+  while ((opt = getopt_long(argc, argv, "vbho:d:p:n:k:e:", LONG_OPTS, &code)) != -1){
     switch (opt) {
       case 'o': // Output
         _output = true;
@@ -40,6 +40,10 @@ Params::Params(int argc, char* argv[])
         _k = true;
         _k_v = extract_double("Overlap Factor");
         break;
+      case 'e': // Epsilon
+        _e = true;
+        _e_v = extract_double("Epsilon");
+        break;
       case 'v': // Version
         _usage = true;
         cout << "fracMAP v" << log_green << version << log_reset << endl;
@@ -62,7 +66,7 @@ extract_double(string parameter) {
     return stod(string(optarg)); // stod() used instead of atof() for exceptions
   }catch (const exception& e) {
     print_usage();
-    Log::fatal("Invalid argument for " + parameter + ": " + e.what());
+    _log.fatal("Invalid argument for " + parameter + ": " + e.what());
     return -1.0; // remove no return warnings
   }
 }
@@ -73,11 +77,11 @@ extract_int(string parameter) {
   try {
     string s = string(optarg);
     if ((double)stoi(s) != stod(s))
-      Log::fatal(parameter + " cannot be a decimal. Must be integer.");
+      _log.fatal(parameter + " cannot be a decimal. Must be integer.");
     return stoi(s);
   }catch (const exception& e) {
     print_usage();
-    Log::fatal("Invalid argument for " + parameter + ". Must be integer.");
+    _log.fatal("Invalid argument for " + parameter + ". Must be integer.");
     return -1; // remove no return warnings
   }
 }
@@ -111,6 +115,11 @@ Params::print_usage(int err)
        << "\n  " << log_cyan << "-k <overlap factor>"
        << log_magenta <<  " --overlap <overlap factor>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of [0.5, 1.0]"
+       // Epsilon
+       << "\n\n Epsilon"
+       << "\n  " << log_cyan << "-e <epsilon>"
+       << log_magenta <<  " --epsilon <epsilon>" << log_reset
+       << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of (0.0, inf)"
        << "\n\n\nOUTPUT:"
        // File output
        << "\n\n File Output"
@@ -140,10 +149,10 @@ Params::print_usage(int err)
   switch (err)
   {
     case 0:
-      Log::fatal("ERROR: Missing required argument.\n");
+      _log.fatal("ERROR: Missing required argument.\n");
     case 1:
-      Log::fatal("ERROR: Invalid switch.\n");
+      _log.fatal("ERROR: Invalid switch.\n");
     case 2:
-      Log::fatal("ERROR: Invalid required argument.\n");
+      _log.fatal("ERROR: Invalid required argument.\n");
   }
 }
