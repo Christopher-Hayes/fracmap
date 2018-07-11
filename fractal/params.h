@@ -1,7 +1,5 @@
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- *  params.hpp
- *  Author:  Chris Hayes
- *  Created:   Dec 2017
+/* params.h
+ * Modified: (07/04/18) Chris Hayes
  */
 #pragma once
 #include <iostream>
@@ -32,7 +30,7 @@ public:
   inline bool check_verbose() const { return _verbose; }
   inline bool check_def() const { return _r; }
   inline bool check_usage() const { return _usage; }
-  // Get param value
+  // Get param argument
   inline double get_df() const { return _df_v; }
   inline double get_kf() const { return _kf_v; }
   inline int get_n() const { return _n_v; }

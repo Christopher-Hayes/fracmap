@@ -14,16 +14,16 @@
 const std::string version = "07.03.18";
 
 // Program Parameters (defaults)
-const double fractal_dimension = 1.82;
-const double prefactor = 1.19;
-const double monomer_count = 20;
+const double fractal_dimension = 2.2;
+const double prefactor = 1.13;
+const double monomer_count = 10;
 const double overlap = 1.0;
 const double epsilon = 0.05;
 
 const int max_random_monomers = 5000; // Exact iterations spent finding monomer with best
 const int max_attach_vectors = 1000;  // Maximum number of random unit vectors to attempt to attach new monomer at.
 
-const double mean_radius = 1.0;
+const double mean_radius = 30.0;
 const int precision = 40;
 const int num_colors = 8;
 

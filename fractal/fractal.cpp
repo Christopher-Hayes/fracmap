@@ -125,6 +125,7 @@ monte_carlo() {
 	double expected_rg = pow(((_n + 1) / _kf), 1 / _df) * _a;
   double best_rg = expected_rg * 1000; // Initialized out of range	
   double best_diff = abs(best_rg - expected_rg);
+  bool under_epsilon = false;
 
   // Random monomer to attach to.
 	for (int attempt = 0; attempt < max_random_monomers; attempt++) {
@@ -137,6 +138,11 @@ monte_carlo() {
 		  best_monomer = temp_monomer;
       best_diff = abs(best_rg - expected_rg);
 		}
+    // TEST: See how many iterations it takes to reach value under Epsilon
+    if (!under_epsilon && (best_diff / _a) < _e) {
+      _log.info("Under epsilon in " + to_string(attempt+1) + " attempts.");
+      under_epsilon = true;
+    }
 	}
 
   // Epsilon

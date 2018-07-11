@@ -20,6 +20,11 @@
 #include "micrograph.h"
 #include "params.h"
 
+#include <boost/filesystem.hpp>
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+
 using namespace std;
 
 // Print function menu ---------------------------------------------------------
@@ -194,6 +199,8 @@ validate_e(double& e, bool cli=false) {
 // Program entry point ---------------------------------------------------------
 int
 main(int argc, char **argv) {
+  boost::filesystem::create_directory("./test_directory");
+
   srand((unsigned int)time(NULL));
 
   ofstream out("out.txt");
@@ -210,9 +217,17 @@ main(int argc, char **argv) {
   if (p.check_usage())
     return 0;
   // Verbose
-  if (p.check_verbose())
-    _log.set_info(true); // _log.info messages will now output
-  _log.info("Verbose mode ON");
+  if (p.check_verbose()) {
+    boost::log::core::get()->set_filter
+    (
+        boost::log::trivial::severity >= boost::log::trivial::info
+    );
+  }
+  // _log.set_info(true); // _log.info messages will now output
+  BOOST_LOG_TRIVIAL(info) << log_blue << "info" << log_reset;
+  BOOST_LOG_TRIVIAL(warning) << log_yellow << "warning" << log_reset;
+  BOOST_LOG_TRIVIAL(error) << log_red << "error" << log_reset;
+  BOOST_LOG_TRIVIAL(fatal) << log_red << "fatal" << log_reset;
 
   // Fractal Dimension
   if (p.check_df()) {

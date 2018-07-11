@@ -1,8 +1,9 @@
 /* params.cpp
- * Modified: Chris Hayes (06/28/18)
+ * Modified: Chris Hayes (07/04/18)
  */
 #include <cstdlib>
 #include <string>
+
 #include "params.h"
 using namespace std;
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -12,7 +13,7 @@ Params::Params(int argc, char* argv[])
   // init
   _df_v = _kf_v = _k_v = _e_v = 0.0;
   _n_v = 0;
-  _verbose = _vec_output = _run_output = _usage = _def = _df = _kf = _n = _k = _e = false;
+  _verbose = _vec_output = _run_output = _usage = _def = _df = _kf = _n = _k = _r = _e = false;
   // process switches
   int code, opt;
   while ((opt = getopt_long(argc, argv, "vbhfd:p:n:k:e:r:o:t:", LONG_OPTS, &code)) != -1){
@@ -102,35 +103,39 @@ void
 Params::print_usage(int err)
 {
   // print usage; modeled from nmap's usage comment
-  cout << "\n\tfracMAP v" << log_green << version << log_reset
-       << "\n\nUsage:"
-       << "\n\n\t./fracmap [Options]"
-       << "\n\n\nInline Command Arguments (program will prompt in absence)"
+  cout << "\n\tFracMAP v" << log_green << version << log_reset
+       << "\n\nUsage:  ./fracmap [Options]"
+       << "\n\nInline Command Arguments (program will prompt in absence)"
        // Fractal Dimension
        << "\n\n" << " Fractal Dimension"
        << "\n  " << log_cyan << "-d <fractal dimension>"
        << log_magenta << " --fractal_dimension <fractal dimension>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of [1.0, 3.0]"
+       << log_cyan << "\n    Default=" << fractal_dimension << log_reset
        // Prefactor
        << "\n\n Prefactor"
        << "\n  " << log_cyan << "-p <prefactor>"
        << log_magenta << " --prefactor <prefactor>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of [1.0, inf)"
+       << log_cyan << "\n    Default=" << prefactor << log_reset
        // Monomer Count
        << "\n\n Monomer Count"
        << "\n  " << log_cyan << "-n <monomer count>"
        << log_magenta <<" --monomers <monomer count>" << log_reset
        << "\n  Expects " << log_green << "integer value " << log_reset << "greater than 0"
+       << log_cyan << "\n    Default=" << monomer_count << log_reset
        // Overlap Factor
        << "\n\n Overlap Factor"
        << "\n  " << log_cyan << "-k <overlap factor>"
        << log_magenta <<  " --overlap <overlap factor>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of [0.5, 1.0]"
+       << log_cyan << "\n    Default=" << overlap << log_reset
        // Epsilon
        << "\n\n Epsilon"
        << "\n  " << log_cyan << "-e <epsilon>"
        << log_magenta <<  " --epsilon <epsilon>" << log_reset
        << "\n  Expects " << log_blue << "decimal value " << log_reset << "with the range of (0.0, inf)"
+       << log_cyan << "\n    Default=" << epsilon << log_reset
        // Defaults
        << "\n\n Defaults"
        << "\n  " << log_cyan << "-f"
@@ -154,10 +159,10 @@ Params::print_usage(int err)
        << log_magenta << " --vec_output <destination>" << log_reset
        << "\n  Log monomer XYZ centers to file."
        // Run output
-       << "\n\n Run result filename"
+       << "\n\n Multiple Run File Output"
        << "\n  " << log_cyan << "-t <destination>"
-       << log_magenta << " --run_dir <destination>" << log_reset
-       << "\n  Choose filename to output run result. Program puts file in ./run_output Defaults to run.txt"
+       << log_magenta << " --run_output <destination>" << log_reset
+       << "\n  Choose filename to output run result. Program puts file inside the ./run_output directory"
        << "\n\n\nMISC:"
        // Help / Usage
        << "\n\n Help"
