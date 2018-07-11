@@ -1,18 +1,23 @@
 /* log.hpp
  * Modified: (07/11/18) Chris Hayes
  */
+// BOOST - LOG
+#include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/attributes/mutable_constant.hpp>
+#include <boost/log/support/date_time.hpp>
+// BOOST - LOG - UTILITY
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/console.hpp>
-#include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/attributes/mutable_constant.hpp>
+// BOOST - DATE-TIME
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/log/support/date_time.hpp>
-#include <boost/log/attributes/mutable_constant.hpp>
+// BOOST - LOG - SINKS
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
+// BOOST - SMART POINTERS
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 
