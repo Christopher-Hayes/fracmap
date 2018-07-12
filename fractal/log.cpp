@@ -2,6 +2,7 @@
  * Modified: (07/11/18) Chris Hayes
  */
 #include "log.h"
+#include <ostream>
 
 namespace attrs   = boost::log::attributes;
 namespace expr    = boost::log::expressions;
@@ -49,8 +50,12 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(my_logger, logger_t) {
   logging::add_common_attributes();
 
   // File logger
+  boost::posix_time::ptime now = boost::posix_time::second_clock::universal_time();
+
+  std::string log_name(FormatTime(now));
+  log_name = "./logs/" + log_name + ".txt";
   logging::add_file_log(
-    boost::log::keywords::file_name = SYS_LOGFILE,
+    boost::log::keywords::file_name = log_name,
     boost::log::keywords::format = (
       expr::stream << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S")
       << " [" << expr::attr< boost::log::trivial::severity_level>("Severity") << "]: "
