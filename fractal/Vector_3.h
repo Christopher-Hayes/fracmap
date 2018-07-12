@@ -45,7 +45,7 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Vector_3& v) {
-  return out << v.x << " " << v.y << " " << v.z << std::endl;
+  return out << v.x << " " << v.y << " " << v.z;
 }
 
 void QuatToMatrix( const double Quat[], double Matrix[] );  // 4 and 9 respectively

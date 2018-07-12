@@ -9,7 +9,8 @@ unix_fractal/unix_fractal.xcodeproj/
 fractal/fracmap
 
 # Run data
-fractal/run_output/*
+fractal/run_output/
+fractal/logs/
 
 # Vim backup files
 *.swp

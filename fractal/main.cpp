@@ -305,7 +305,7 @@ main(int argc, char **argv) {
       stringstream date_stream;
       date_stream.imbue(std::locale(date_stream.getloc(), facet));
       date_stream << boost::posix_time::microsec_clock::universal_time();
-      string batch_dir = string("./run_output/run_") + date_stream.str();
+      batch_dir = string("./run_output/run_") + date_stream.str();
       // Create directory
       boost::filesystem::create_directory(batch_dir);
     }
