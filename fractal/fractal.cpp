@@ -203,6 +203,7 @@ print_monomers(ostream& out) const {
       << "\nkf: " << _kf
       << "\nn: " << _n
       << "\nk: " << _k
+      << "\na: " << _a
       << "\n\nRg: " << _rg
       << "\n\nX Y Z" << endl;
   for (Vector_3 v : _fractal)

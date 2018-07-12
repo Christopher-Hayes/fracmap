@@ -1,0 +1,8 @@
+1) default
+    N = 10, 20, 50, 100, 150, 200, 250
+    visualize each of the above cases 3-D
+
+2) overlap k=1.0, 0.5, 0.75, 0.9
+    visualize (n=10)
+
+Include _a in XYZ output
