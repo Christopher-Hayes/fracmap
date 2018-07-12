@@ -80,8 +80,8 @@ LOGGABLE
             SetGetAttrib("LineNumber", (unsigned int)__LINE__))( \
             ::boost::log::keywords::severity = (boost::log::trivial::sev)))
 
-#define INFO LOG(info)
-#define WARN LOG(warning)
-#define ERROR LOG(error)
-#define FATAL LOG(fatal)
+#define INFO LOG(info) << log_blue << "[INFO] "
+#define WARN LOG(warning) << log_yellow << "[WARN] "
+#define ERROR LOG(error) << log_red << "[ERROR] "
+#define FATAL LOG(fatal) << log_red << "[FATAL] "
 

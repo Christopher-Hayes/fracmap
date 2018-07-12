@@ -46,14 +46,14 @@ try {
     // The first thing we have to do to get using the library is
     // to set up the logging sinks - i.e. where the logs will be written to.
     logging::add_console_log(std::clog,
-                 keywords::format = "%TimeStamp%: %_%",
+                 keywords::format = "\033[36m[%TimeStamp%]\033[0m %_%\033[0m",
                  keywords::auto_flush = true);
 
     // Create a text file sink
     typedef sinks::synchronous_sink<sinks::text_file_backend> file_sink;
     shared_ptr<file_sink> sink(new file_sink(
     // File name pattern.
-    keywords::file_name = "%Y%m%d_%H%M%S_%5N.log",
+    keywords::file_name = "./logs/%Y%m%d_%H%M%S_%5N.log",
     // Rotation size, in characters
     keywords::rotation_size = 16384,
     // Rotate daily if not more often.  The time is arbitrary.
@@ -76,7 +76,7 @@ try {
     sink->locked_backend()->scan_for_files();
     boost::log::register_simple_formatter_factory<
     logging::trivial::severity_level, char>("Severity");
-    sink->set_formatter(expr::stream
+    sink->set_formatter(expr::stream 
             << expr::attr<boost::posix_time::ptime>("TimeStamp")
             << " " << logging::trivial::severity << "["
             << expr::attr<string>("FileName") << ":"
@@ -97,9 +97,6 @@ try {
     slg.add_attribute("LineNumber",
               attrs::constant<unsigned int>(__LINE__));
     slg.add_attribute("FileName", attrs::constant<string>(__FILE__));
-    for (unsigned int i = 0; i < 2; ++i) {
-    BOOST_LOG_SEV(slg, logging::trivial::info) << "Testing log, #" << i;
-    }
 } catch (std::exception& e) {
     std::cerr << "Failed to establish logging: " << e.what() << std::endl;
     throw LoggingInitException();

@@ -201,8 +201,6 @@ validate_e(double& e, bool cli=false) {
 int
 main(int argc, char **argv) {
   Log log;
-  boost::filesystem::create_directory("./test_directory");
-
   srand((unsigned int)time(NULL));
 
   ofstream out("out.txt");
@@ -291,12 +289,28 @@ main(int argc, char **argv) {
     if (total_runs < 1)
       FATAL << "Invalid number of runs. Must be greater than 0.";
     // TODO: ofstream safety
+    // Create run_output directory (if applicable)
+    if (!boost::filesystem::exists("./run_output"))
+        boost::filesystem::create_directory("./run_output");
+    // Create batch directory; TODO: naming conflicts
+    // TODO: Figure out a way to move logging into this directory (would be logical)
+    string batch_dir = "";
+    if (p.check_run_output()) {
+      // TODO: interface path operations through boost filestream library
+      batch_dir = string("./run_output/run_") + p.get_run_output();
+      boost::filesystem::create_directory(batch_dir);
+    }else {
+      // Current date-time will be directory name
+      boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H:%M:%S.%f");
+      stringstream date_stream;
+      date_stream.imbue(std::locale(date_stream.getloc(), facet));
+      date_stream << boost::posix_time::microsec_clock::universal_time();
+      string batch_dir = string("./run_output/run_") + date_stream.str();
+      // Create directory
+      boost::filesystem::create_directory(batch_dir);
+    }
     // Output file
-    ofstream run_output;
-    if (p.check_run_output())
-      run_output.open(string("run_output/") + p.get_run_output());
-    else
-      run_output.open(string("run_output/") + run_output_filename);
+    ofstream run_output(batch_dir + "/run.txt");
     run_output << "Df\tkf\tn\tk\te\n"
                << df << "\t" << kf << "\t" << n << "\t"
                << k << "\t" << e << "\n\n"
@@ -321,6 +335,12 @@ main(int argc, char **argv) {
       run_output << run << "\t" << base->rg() << "\t" << base->actual_e() << endl;
       sum_rg += base->rg();
       sum_e += base->actual_e();
+      // Output XYZ
+      string xyz_filename = batch_dir + "/xyz_run_" + to_string(run) + ".txt";
+      ERROR << xyz_filename;
+      ofstream xyz_output(xyz_filename);
+      base->print_monomers(xyz_output);
+      xyz_output.close();
     }
     // Averages
     run_output << "-----------------\nAverage Rg: " << (sum_rg / total_runs)
