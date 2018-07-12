@@ -4,6 +4,7 @@
  */
 #pragma once
 #include <string>
+#include "log2.hpp"
 #include "settings.h"
 
 class Vector_3

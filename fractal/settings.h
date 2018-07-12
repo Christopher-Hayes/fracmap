@@ -9,9 +9,9 @@
 #include <ostream>
 #include <time.h>
 
-#include "log.h"
+// #include "log2.hpp"
 
-const std::string version = "07.03.18";
+const std::string version = "07.12.18";
 
 // Program Parameters (defaults)
 const double fractal_dimension = 2.2;
@@ -39,4 +39,4 @@ const double filter_depth = mean_radius;
 const std::string run_output_filename = "run.txt";
 
 // Logging
-static Log& _log = Log::get_instance();
+// static Log& _log = Log::get_instance();

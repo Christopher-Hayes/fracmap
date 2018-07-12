@@ -23,12 +23,12 @@ Fractal(double df, double kf, double k, double e)
 {
   // Validate parameters
   if (df < 1.0 || df > 3.0)
-    _log.fatal("Invalid fractal dimension. Range: [1.0, 3.0]");
+    FATAL << "Invalid fractal dimension. Range: [1.0, 3.0]";
   if (kf < 1.0)
-    _log.fatal("Invalid prefactor. Range: [1.0, inf)");
+    FATAL << "Invalid prefactor. Range: [1.0, inf)";
   if (k < 0.5 || k > 1.0)
-    _log.fatal("Invalid overlap. Range: [0.5, 1.0]");
-  _log.info("Fractal initialized successfully. df, kf, k are good.");
+    FATAL << "Invalid overlap. Range: [0.5, 1.0]";
+  INFO << "Fractal initialized successfully. df, kf, k are good.";
 }
 
 // Fractal Generation ==========================================================
@@ -36,8 +36,8 @@ Fractal(double df, double kf, double k, double e)
 void Fractal::
 generate_fractal(int target_size, bool output) {
   if (target_size < 1)
-    _log.fatal("Cannot generate fractal with a size less than 1.");
-  _log.info("Generating fractal..");
+    FATAL << "Cannot generate fractal with a size less than 1.";
+  INFO << "Generating fractal..";
   std::chrono::steady_clock::time_point start = chrono::steady_clock::now();
   while ((int)size() < target_size) {
     create_monomer();
@@ -64,13 +64,13 @@ generate_fractal(int target_size, bool output) {
 void Fractal::
 create_monomer() {
 	if (_fractal.empty()) {
-    _log.info("Adding fractal monomer center at (0.0, 0.0, 0.0)");
+    INFO << "Adding fractal monomer center at (0.0, 0.0, 0.0)";
 		add_monomer(0.0f, 0.0f, 0.0f);
 	}else if (_fractal.size() == 1) {
-    _log.info("Attaching random monomer to center monomer.");
+    INFO << "Attaching random monomer to center monomer.";
 	  add_monomer(find_attach_monomer(_fractal.front()));
 	}else {
-    _log.info("Adding new monomer to fractal using Monte Carlo algorithm.");
+    INFO << "Adding new monomer to fractal using Monte Carlo algorithm.";
 		monte_carlo();
 	}
 }
@@ -83,7 +83,7 @@ add_monomer(double x, double y, double z) {
 void Fractal::
 add_monomer(const Vector_3& new_monomer) {
   _fractal.push_back(new_monomer);
-  _log.info("Adding monomer at point " + new_monomer.print());
+  INFO << "Adding monomer at point " + new_monomer.print();
   
   _r_sum += new_monomer;
   _r_squared += new_monomer * new_monomer;
@@ -109,7 +109,7 @@ find_attach_monomer(const Vector_3& parent_monomer) {
       return new_monomer;
   }
   // Failed -> return out of range value
-  _log.info("Failed to attach to " + parent_monomer.print() + ". Trying new monomer.");
+  INFO << "Failed to attach to " + parent_monomer.print() + ". Trying new monomer.";
   double out_of_range = _n * _a;
   return Vector_3(out_of_range, out_of_range, out_of_range);
 }
@@ -118,7 +118,7 @@ void Fractal::
 monte_carlo() {
 	Vector_3 temp_monomer, parent_monomer;
   double out_of_range = _n * _a;
-  _log.info("Out of range best_monomer = " + to_string(out_of_range));
+  INFO << "Out of range best_monomer = " + to_string(out_of_range);
   Vector_3 best_monomer(out_of_range, out_of_range, out_of_range);
 
 	double temp_rg;
@@ -140,7 +140,7 @@ monte_carlo() {
 		}
     // TEST: See how many iterations it takes to reach value under Epsilon
     if (!under_epsilon && (best_diff / _a) < _e) {
-      _log.info("Under epsilon in " + to_string(attempt+1) + " attempts.");
+      INFO << "Under epsilon in " + to_string(attempt+1) + " attempts.";
       under_epsilon = true;
     }
 	}
@@ -149,12 +149,12 @@ monte_carlo() {
   double actual_epsilon = best_diff / _a;
   _sum_epsilon += actual_epsilon;
   if (actual_epsilon < _e) {
-    _log.info(string("Actual epsilon = ") + to_string(actual_epsilon));
+    INFO << string("Actual epsilon = ") + to_string(actual_epsilon);
     add_monomer(best_monomer);
   }else {
-    _log.fatal(string("Best monomer did not satisfy epsilon.") +
+    FATAL << string("Best monomer did not satisfy epsilon.") +
                "\n  best_diff / _a = " + to_string(best_diff / _a) +
-               "\n  epsilon = " + to_string(_e));
+               "\n  epsilon = " + to_string(_e);
   }
 }
 // Find how a monomer would affect radius of gyration --------------------------
@@ -172,7 +172,7 @@ parameter_update() {
   _n = (int)_fractal.size();
   _r_mean = _r_sum / _n;
   _rg = sqrt(_r_squared / _n - (_r_mean * _r_mean)); // Standard deviation
-  _log.info("Fractal parameters updated."); //May remove depending on speed cost
+  INFO << "Fractal parameters updated."; //May remove depending on speed cost
 }
 // Obtain a random monomer from the agglomerate --------------------------------
 Vector_3 Fractal::
@@ -192,7 +192,7 @@ monomer_proximity(const Vector_3& new_monomer, double threshold) {
 void Fractal::clear() {
 	_fractal.clear();
 	parameter_update();
-  _log.info("Fractal cleared.");
+  INFO << "Fractal cleared.";
 }
 
 // Print functions =============================================================

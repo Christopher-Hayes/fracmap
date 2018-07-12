@@ -6,6 +6,7 @@
 #include <getopt.h>
 
 #include "settings.h"
+#include "log2.hpp"
 
 class Params
 {

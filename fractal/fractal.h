@@ -15,7 +15,7 @@
 #include <time.h>
 #include <vector>
 
-#include "log.h"
+#include "log2.hpp"
 #include "settings.h"
 #include "Vector_3.h"
 

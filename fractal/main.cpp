@@ -15,7 +15,7 @@
 #include <sys/wait.h>
 
 #include "fractal.h"
-#include "log.h"
+#include "log2.hpp"
 #include "settings.h"
 #include "micrograph.h"
 #include "params.h"
@@ -30,6 +30,7 @@ using namespace std;
 // Print function menu ---------------------------------------------------------
 void 
 print_menu() {
+  LOGGABLE;
 	cout << "\n  + - - - - - - - FracMAP  menu - - - - - - - +"
        << "\n  |     " << left << setw(38) << "" << "|"
        << "\n  | 0 | " << setw(38) << "Create new fractal (Clear prexisting)" << "|"
@@ -53,7 +54,7 @@ void open_output(ofstream& output) {
     // Check that file doesn't already exists. access() is a sys/stat.h function
     if (access(filename.c_str(), F_OK) == -1)
       break;
-    _log.warn("file already exists.");
+    WARN << "file already exists.";
   }
 
   output.open(filename.c_str());
@@ -95,7 +96,7 @@ grab_double(const double& def, string param, string range) {
     else
       return stod(input);
   }catch (const exception& e) {
-    _log.fatal("Bad double input."); // improve...
+    FATAL << "Bad double input."; // improve...
     return -1.0;
   }
 }
@@ -111,7 +112,7 @@ grab_int(const int& def, string param, string range) {
     else
       return stoi(input);
   }catch (const exception& e) {
-    _log.fatal("Bad int input."); // improve..
+    FATAL << "Bad int input."; // improve..
     return -1;
   }
 }
@@ -125,11 +126,11 @@ validate_df(double& df, bool cli=false) {
     // Check value is within bounds
     if (df >= 1.0 && df <= 3.0)
       break;
-    _log.warn("Fractal Dimension is invalid. It must be a double within the bounds [1.0, 3.0]\n");
+    WARN << "Fractal Dimension is invalid. It must be a double within the bounds [1.0, 3.0]\n";
     cout << "New Fractal Dimension: ";
     df = grab_double(fractal_dimension, "Fractal Dimension", "[1.0, 3.0]");
   }
-  _log.info("Good input: fractal dimension");
+  INFO << "Good input: fractal dimension";
 }
 // Validate Prefactor ----------------------------------------------------------
 void
@@ -141,11 +142,11 @@ validate_kf(double& kf, bool cli=false) {
     // Check value is within bounds
     if (kf >= 1.0)
       break;
-    _log.warn("Prefactor is invalid. It must be a double within the bounds [1.0, inf)\n");
+    WARN << "Prefactor is invalid. It must be a double within the bounds [1.0, inf)\n";
     cout << "New Prefactor: ";
     kf = grab_double(prefactor, "Prefactor", "[1.0, inf)");
   }
-  _log.info("Good input: prefactor");
+  INFO << "Good input: prefactor";
 }
 // Validate Monomer Count ------------------------------------------------------
 void
@@ -157,11 +158,11 @@ validate_n(int& n, bool cli=false) {
     // Check value is within bounds
     if (n > 0)
       break;
-    _log.warn("Monomer count is invalid. It must be an integer with the bounds [1, inf)\n");
+    WARN << "Monomer count is invalid. It must be an integer with the bounds [1, inf)\n";
     cout << "New Monomer Count: ";
     n = grab_int(monomer_count, "Monomer Count", "[1, inf)");
   }
-  _log.info("Good input: monomer count");
+  INFO << "Good input: monomer count";
 }
 // Validate Overlap Factor -----------------------------------------------------
 void
@@ -173,11 +174,11 @@ validate_k(double& k, bool cli=false) {
     // Check value is within bounds
     if (k >= 0.5 && k <= 1.0)
       break;
-    _log.warn("Overlap Factor is invalid. It must be a decimal with the bounds [0.5, 1.0]\n");
+    WARN << "Overlap Factor is invalid. It must be a decimal with the bounds [0.5, 1.0]\n";
     cout << "New Overlap Factor: ";
     k = grab_double(overlap, "Overlap Factor", "[0.5, 1.0]");
   }
-  _log.info("Good input: overlap factor");
+  INFO << "Good input: overlap factor";
 }
 // Validate Epsilon ------------------------------------------------------------
 void
@@ -190,15 +191,16 @@ validate_e(double& e, bool cli=false) {
     // Check value is within bounds
     if (e > 0.0)
       break;
-    _log.warn("Epsilon is invalid. It must be a decimal greater than 0.0\n");
+    WARN << "Epsilon is invalid. It must be a decimal greater than 0.0\n";
     cout << "New Epsilon (press enter to use default): ";
     e = grab_double(epsilon, "Epsilon", "(0.0, inf)");
   }
-  _log.info("Good input: overlap factor");
+  INFO << "Good input: overlap factor";
 }
 // Program entry point ---------------------------------------------------------
 int
 main(int argc, char **argv) {
+  Log log;
   boost::filesystem::create_directory("./test_directory");
 
   srand((unsigned int)time(NULL));
@@ -223,61 +225,56 @@ main(int argc, char **argv) {
         boost::log::trivial::severity >= boost::log::trivial::info
     );
   }
-  // _log.set_info(true); // _log.info messages will now output
-  BOOST_LOG_TRIVIAL(info) << log_blue << "info" << log_reset;
-  BOOST_LOG_TRIVIAL(warning) << log_yellow << "warning" << log_reset;
-  BOOST_LOG_TRIVIAL(error) << log_red << "error" << log_reset;
-  BOOST_LOG_TRIVIAL(fatal) << log_red << "fatal" << log_reset;
 
   // Fractal Dimension
   if (p.check_df()) {
     df = p.get_df();
     validate_df(df, true);
-    _log.info("CLI argument df=" + to_string(df));
+    INFO << "CLI argument df=" + to_string(df);
   }else if (p.check_def()) {
     df = fractal_dimension;
-    _log.info("Using default value for fractal dimension. df=" + to_string(df));
+    INFO << "Using default value for fractal dimension. df=" + to_string(df);
   }
   // Prefactor
   if (p.check_kf()) {
     kf = p.get_kf();
     validate_kf(kf, true);
-    _log.info("CLI argument kf=" + to_string(kf));
+    INFO << "CLI argument kf=" + to_string(kf);
   }else if (p.check_def()) {
     kf = prefactor;
-    _log.info("Using default value for prefactor. kf=" + to_string(kf));
+    INFO << "Using default value for prefactor. kf=" + to_string(kf);
   }
   // Monomer Count
   if (p.check_n()) {
     n = p.get_n();
     validate_n(n, true);
-    _log.info("CLI argument n=" + to_string(n));
+    INFO << "CLI argument n=" + to_string(n);
   }else if (p.check_def()) {
     n = monomer_count;
-    _log.info("Using default value for monomer count. n=" + to_string(n));
+    INFO << "Using default value for monomer count. n=" + to_string(n);
   }
   // Overlap Factor
   if (p.check_k()) {
     k = p.get_k();
     validate_k(k, true);
-    _log.info("CLI argument k=" + to_string(k));
+    INFO << "CLI argument k=" + to_string(k);
   }else if (p.check_def()) {
     k = overlap;
-    _log.info("Using default value for overlap. k=" + to_string(k));
+    INFO << "Using default value for overlap. k=" + to_string(k);
   }
   // Epsilon
   if (p.check_e()) {
     e = p.get_e();
     validate_e(e, true);
-    _log.info("CLI argument e=" + to_string(e));
+    INFO << "CLI argument e=" + to_string(e);
   }else if (p.check_def()) {
     e = epsilon;
-    _log.info("Using default value for epsilon. e=" + to_string(e));
+    INFO << "Using default value for epsilon. e=" + to_string(e);
   }
 
   // Runs
   if (p.check_r()) {
-    _log.info("Running batch..");
+    INFO << "Running batch..";
     // Validation
     if (!p.check_df() && !p.check_def())
       validate_df(df);
@@ -292,7 +289,7 @@ main(int argc, char **argv) {
     // # runs
     int total_runs = p.get_r();
     if (total_runs < 1)
-      _log.fatal("Invalid number of runs. Must be greater than 0.");
+      FATAL << "Invalid number of runs. Must be greater than 0.";
     // TODO: ofstream safety
     // Output file
     ofstream run_output;
@@ -343,7 +340,7 @@ main(int argc, char **argv) {
           validate_n(n);
           validate_k(k);
           validate_e(e);
-          _log.info("Creating new fractal..");
+          INFO << "Creating new fractal..";
           // Generate fractal
           base = new Fractal(df, kf, k, e);
           base->generate_fractal(n);
@@ -354,11 +351,11 @@ main(int argc, char **argv) {
           n = -1;
           break;
         case '1': // Structure Factor
-          _log.info("Computing the fractal's stucture factor..");
+          INFO << "Computing the fractal's stucture factor..";
           struct_factor(*base);
           break;
         case '2': // Micrograph analysis
-          _log.info("Computing a 2D micrograph analysis on the fractal..");
+          INFO << "Computing a 2D micrograph analysis on the fractal..";
           micro_analysis(*base);
           break;
         case '3': // Quit
@@ -367,7 +364,7 @@ main(int argc, char **argv) {
           cout << "Program terminated successfully.\n" << endl;
           return 0;
         default: // Catch all invalid input
-          _log.warn("Invalid menu option.\n");
+          WARN << "Invalid menu option.\n";
           break;					
       }
       // Print main menu; get user input

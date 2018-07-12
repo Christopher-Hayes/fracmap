@@ -11,6 +11,36 @@ namespace src      = boost::log::sources;
 namespace keywords = boost::log::keywords;
 namespace sinks    = boost::log::sinks;
 
+// Credit: @Fozi https://stackoverflow.com/a/12605002/2096769
+namespace {
+    template<class SharedPointer> struct Holder {
+        SharedPointer p;
+
+        Holder(const SharedPointer &p) : p(p) {}
+        Holder(const Holder &other) : p(other.p) {}
+        Holder(Holder &&other) : p(std::move(other.p)) {}
+
+        void operator () (...) { p.reset(); }
+    };
+}
+template<class T> std::shared_ptr<T> to_std_ptr(const boost::shared_ptr<T> &p) {
+    typedef Holder<std::shared_ptr<T>> H;
+    if(H *h = boost::get_deleter<H, T>(p)) {
+        return h->p;
+    } else {
+        return std::shared_ptr<T>(p.get(), Holder<boost::shared_ptr<T>>(p));
+    }
+}
+template<class T> boost::shared_ptr<T> to_boost_ptr(const std::shared_ptr<T> &p){
+    typedef Holder<boost::shared_ptr<T>> H;
+    if(H * h = std::get_deleter<H, T>(p)) {
+        return h->p;
+    } else {
+        return boost::shared_ptr<T>(p.get(), Holder<std::shared_ptr<T>>(p));
+    }
+}
+
+// Credit: @JMA https://stackoverflow.com/a/35911579/2096769
 Log::Log() {
 try {
     // The first thing we have to do to get using the library is
@@ -53,7 +83,7 @@ try {
             << expr::attr<unsigned int>("LineNumber") << "] "
             << expr::smessage);
     // Add it to the core
-    logging::core::get()->add_sink(sink);
+    logging::core::get()->add_sink(to_boost_ptr(sink));
     // Add some attributes too
     logging::add_common_attributes();
     logging::core::get()->add_global_attribute("TimeStamp",
