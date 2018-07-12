@@ -1,10 +1,22 @@
 /* log.hpp
- * Created: Chris Hayes (06/26/18)
+ * Modified: (07/11/18) Chris Hayes
  */
 #pragma once
-#include <iostream>
+// BOOST - DATE-TIME
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+// BOOST - FILESYSTEM
+#include <boost/filesystem.hpp>
+// BOOST - LOG
+#include <boost/log/expressions.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/support/date_time.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup.hpp>
 
-// Terminal text color highlighting. TODO: Replace with robust library.
+#include "settings.h"
+
+// Terminal text color highlighting.
 static const std::string log_reset   = "\033[0m";
 static const std::string log_black   = "\033[30m"; /* Black */
 static const std::string log_red     = "\033[31m"; /* Red */
@@ -14,46 +26,16 @@ static const std::string log_blue    = "\033[34m"; /* Blue */
 static const std::string log_magenta = "\033[35m"; /* Magenta */
 static const std::string log_cyan    = "\033[36m"; /* Cyan */
 static const std::string log_white   = "\033[37m"; /* White */
-static const std::string log_bold_black   = "\033[1m\033[30m"; /* Bold Black */
-static const std::string log_bold_green   = "\033[1m\033[32m"; /* Bold Green */
-static const std::string log_bold_yellow  = "\033[1m\033[33m"; /* Bold Yellow */
-static const std::string log_bold_blue    = "\033[1m\033[34m"; /* Bold Blue */
-static const std::string log_bold_magenta = "\033[1m\033[35m"; /* Bold Magenta */
-static const std::string log_bold_cyan    = "\033[1m\033[36m"; /* Bold Cyan */
-static const std::string log_bold_white   = "\033[1m\033[37m"; /* Bold White */
-static const std::string log_bold_red     = "\033[1m\033[31m"; /* Bold Red */
 
-class Log
-{
-  public:
-    static Log& get_instance() { static Log instance; return instance; }
+#define INFO  BOOST_LOG_SEV(my_logger::get(), boost::log::trivial::info) << log_blue
+#define WARN  BOOST_LOG_SEV(my_logger::get(), boost::log::trivial::warning) << log_yellow
+#define ERROR BOOST_LOG_SEV(my_logger::get(), boost::log::trivial::error) << log_red
+#define FATAL BOOST_LOG_SEV(my_logger::get(), boost::log::trivial::fatal) << log_red
 
-    // core logging
-    void info(std::string s) {
-      if (_info)
-        std::cout << log_blue << " INFO: " << s << log_reset << std::endl;
-    }
+#define SYS_LOGFILE "./logs/fracmap_test.log"
 
-    void warn(std::string s) {
-      if (_warn)
-        std::cout << log_yellow << " WARNING: " << s << log_reset << std::endl;
-    }
+//Narrow-char thread-safe logger.
+typedef boost::log::sources::severity_logger_mt<boost::log::trivial::severity_level> logger_t;
 
-    void fatal(std::string s) {
-      if (_fatal)
-        std::cout << log_red << " ERROR: " << s << log_reset << std::endl;
-      exit(0);
-    }
-
-    // setters
-    void set_info(bool b)  { _info = b;  }
-    void set_warn(bool b)  { _warn = b;  }
-    void set_fatal(bool b) { _fatal = b; }
-
-  private:
-    Log() {}
-    bool _info = false, _warn = true, _fatal = true;
-  public:
-    Log(Log const&)             = delete;
-    void operator=(Log const&)  = delete;
-};
+//declares a global logger with a custom initialization
+BOOST_LOG_GLOBAL_LOGGER(my_logger, logger_t)

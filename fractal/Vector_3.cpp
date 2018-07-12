@@ -1,6 +1,6 @@
 /* Vector_3.cpp
  * Modified: Mark Garro (09/06/07)
- * Modified: Chris Hayes (06/29/18)
+ * Modified: Chris Hayes (07/11/18)
  */
 #include "settings.h"
 #include "Vector_3.h"
@@ -172,7 +172,7 @@ operator-=(const Vector_3 & rhs) {
 Vector_3 Vector_3::
 operator/(const double& div) const {
   if (div == 0) {
-    _log.warn("Dividing vector by zero.");
+    //_log.warn("Dividing vector by zero."); TODO: boost logging
     return *this;
   }
   return Vector_3(x / div, y / div, z / div);

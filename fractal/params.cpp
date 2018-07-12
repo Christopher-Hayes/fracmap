@@ -74,11 +74,11 @@ Params::Params(int argc, char* argv[])
 // Extract float from optarg
 double Params::
 extract_double(string parameter) {
-  try {
+    try {
     return stod(string(optarg)); // stod() used instead of atof() for exceptions
   }catch (const exception& e) {
     print_usage();
-    _log.fatal("Invalid argument for " + parameter + ": " + e.what());
+    FATAL << "Invalid argument for " << parameter << ": " << e.what();
     return -1.0; // remove no return warnings
   }
 }
@@ -89,11 +89,11 @@ extract_int(string parameter) {
   try {
     string s = string(optarg);
     if ((double)stoi(s) != stod(s))
-      _log.fatal(parameter + " cannot be a decimal. Must be integer.");
+      FATAL << parameter << " cannot be a decimal. Must be integer.";
     return stoi(s);
   }catch (const exception& e) {
     print_usage();
-    _log.fatal("Invalid argument for " + parameter + ". Must be integer.");
+    FATAL << "Invalid argument for " << parameter << ". Must be integer.";
     return -1; // remove no return warnings
   }
 }
@@ -181,10 +181,10 @@ Params::print_usage(int err)
   switch (err)
   {
     case 0:
-      _log.fatal("ERROR: Missing required argument.\n");
+      FATAL << "ERROR: Missing required argument.\n";
     case 1:
-      _log.fatal("ERROR: Invalid switch.\n");
+      FATAL << "ERROR: Invalid switch.\n";
     case 2:
-      _log.fatal("ERROR: Invalid required argument.\n");
+      FATAL << "ERROR: Invalid required argument.\n";
   }
 }
