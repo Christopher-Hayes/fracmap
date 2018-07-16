@@ -105,7 +105,7 @@ find_attach_monomer(const Vector_3& parent_monomer) {
   for (int attempt=0; attempt<max_attach_vectors; attempt++) {
     rand_vector = Vector_3::random_vec();
     new_monomer = rand_vector * threshold + parent_monomer;
-    if (monomer_proximity(new_monomer, threshold))
+    if (!monomer_proximity(new_monomer, threshold))
       return new_monomer;
   }
   // Failed -> return out of range value

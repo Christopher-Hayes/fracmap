@@ -3,16 +3,18 @@
 
 CXX = g++
 
-## OSX
-CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/local/Cellar/boost/1.67.0_1/include
-LDFLAGS = -L/usr/local/Cellar/boost/1.67.0_1/lib
-## Linux
-#CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/include
-#LDFLAGS = -L/usr/lib/x86_64-linux-gnu
-## OSX
-LIBS = -lboost_filesystem -lboost_system -lboost_date_time -lboost_thread-mt -lboost_regex -lboost_log-mt -lboost_log_setup-mt
-## Linux
-#LIBS = -lboost_filesystem -lboost_system -lboost_date_time -pthread -lboost_thread -lboost_regex -lboost_log -lboost_log_setup
+OS := $(shell uname)
+ifeq ($(OS), Darwin)
+	# OSX
+	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/local/Cellar/boost/1.67.0_1/include
+	LDFLAGS = -L/usr/local/Cellar/boost/1.67.0_1/lib
+	LIBS = -lboost_filesystem -lboost_system -lboost_date_time -lboost_thread-mt -lboost_regex -lboost_log-mt -lboost_log_setup-mt
+else
+	# Linux
+	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/include
+	LDFLAGS = -L/usr/lib/x86_64-linux-gnu
+	LIBS = -lboost_filesystem -lboost_system -lboost_date_time -pthread -lboost_thread -lboost_regex -lboost_log -lboost_log_setup
+endif
 
 
 EXE = fracmap

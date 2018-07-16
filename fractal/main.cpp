@@ -203,7 +203,7 @@ main(int argc, char **argv) {
   Log log;
   srand((unsigned int)time(NULL));
 
-  ofstream out("out.txt");
+  // ofstream out("out.txt");
 
 	Fractal* base = nullptr;
   double df = -1; // Fractal Dimension
