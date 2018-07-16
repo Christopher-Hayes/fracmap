@@ -13,7 +13,7 @@
 #include <GL/gl.h>			// Header File For The OpenGL32 Library
 #endif
 
-#include "fractal.h"
+#include "../fractal/fractal.h"
  
 class FractalCanvas: public wxGLCanvas {
 public:
