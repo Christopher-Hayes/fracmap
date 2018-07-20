@@ -55,8 +55,12 @@ public:
   
   // Vector-like operations
 	unsigned int size() const { return _n; }
+  void pop_back() { _fractal.pop_back(); }
+
+  // index is returned?
   int begin() const { return 0; }
   int end() const { return _fractal.size(); }
+
 	void clear();
   Vector_3 return_last() const { return _fractal.back(); }
   Vector_3& grab(int i) {	return _fractal[i]; }

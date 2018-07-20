@@ -336,9 +336,9 @@ main(int argc, char **argv) {
       sum_rg += base->rg();
       sum_e += base->actual_e();
       // Output XYZ
-      string xyz_filename = batch_dir + "/xyz_run_" + to_string(run) + ".txt";
-      ERROR << xyz_filename;
-      ofstream xyz_output(xyz_filename);
+      string xyz_filepath = batch_dir + "/xyz_run_" + to_string(run) + ".txt";
+      INFO << "Location xyz_filepath: " << xyz_filepath << endl;
+      ofstream xyz_output(xyz_filepath);
       base->print_monomers(xyz_output);
       xyz_output.close();
     }
