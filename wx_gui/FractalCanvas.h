@@ -1,7 +1,4 @@
-
-#ifndef __FRACTALCANVAS__
-#define __FRACTALCANVAS__
-
+#pragma once
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 
@@ -58,6 +55,3 @@ protected:
     DECLARE_EVENT_TABLE()
 };
  
-
-
-#endif

@@ -1,19 +1,13 @@
-/*
- *  ThreadedFractalCreate.h
- *  wxFractals
- *
+/* ThreadedFractalCreate.h
  *  Created by Shammah Chancellor on 07/11/2008.
  *  Copyright 2008 University Of Neveda, Reno. All rights reserved.
- *
+ * Modified: (07/18/18) Chris Hayes
  */
-
-#ifndef __THREADEDFRACTALCREATE_H__
-#define __THREADEDFRACTALCREATE_H__
-
+#pragma once
 #include <wx/wx.h>
 #include <wx/thread.h>
 #include "PostTextEvent.h"
-#include "fractal.h"
+#include "../fractal/fractal.h"
 
 enum
 {
@@ -24,8 +18,8 @@ enum
 
 class ThreadedFractalCreate : public wxThread
 {
-	Fractal *base;
-	long fractal_size;
+	Fractal* _base;
+	long _fractal_size;
 	
 public:
 	ThreadedFractalCreate( wxFrame* parent, Fractal *frac, long size );
@@ -37,6 +31,3 @@ public:
 protected:
 	wxFrame* m_parent;
 };
-
-
-#endif

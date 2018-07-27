@@ -20,7 +20,7 @@
 #include "ThreadedFractalCreate.h"
 #include "FractalCanvas.h"
 
-#include "micrograph.h"
+#include "../fractal/micrograph.h"
 
 enum MicrographFrameEvents
 {

@@ -6,12 +6,12 @@ CXX = g++
 OS := $(shell uname)
 ifeq ($(OS), Darwin)
 	# OSX TODO: osx wxwidgets include TODO: configure file to handle libraries
-	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/local/Cellar/boost/1.67.0_1/include wx-config --cxxflags wx-config --libs
+	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/local/Cellar/boost/1.67.0_1/include `wx-config --cxxflags --libs`
 	LDFLAGS = -L/usr/local/Cellar/boost/1.67.0_1/lib
 	LIBS = -lboost_filesystem -lboost_system -lboost_date_time -lboost_thread-mt -lboost_regex -lboost_log-mt -lboost_log_setup-mt
 else
 	# Linux
-	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/include 'wx-config --cxxflags' 'wx-config --libs'
+	CXXFLAGS = -std=c++11 -pedantic -g -Wall -O1 -DBOOST_ALL_DYN_LINK -I/usr/include `wx-config --cxxflags --libs`
 	LDFLAGS = -L/usr/lib/x86_64-linux-gnu
 	LIBS = -lboost_filesystem -lboost_system -lboost_date_time -pthread -lboost_thread -lboost_regex -lboost_log -lboost_log_setup
 endif
